@@ -95,17 +95,17 @@ function get_remaining_flags(s::String, flags_start::svec, flags_stop::svec)::Bo
 end
 
 function get(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true)
+  L = Vector{String}(undef, 0)
   L_start = [m for flag_start in flags_start for m in find_next_iter(s, flag_start)]
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
   sort!(L_start)
   sort!(L_stop)
   (L_start, L_stop) = get_alternating_consecutive_list(L_start, L_stop)
-  s_new = ""
   for (i_start, i_stop) in zip(L_start, L_stop)
     b, m, a = substring_decomp_by_index(s, i_start, i_stop, flags_start, flags_stop, inclusive)
-    s_new = string(s_new, m)
+    push!(L, m)
   end
-  return s_new
+  return L
 end
 
 function remove(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true, reverse_order::Bool = false)

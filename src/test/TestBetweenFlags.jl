@@ -69,20 +69,24 @@ function test_get_alternating_consecutive_list()
 end
 
 function test_get_between_flags()
-  s_i1 = "Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface..."
-  s_o1 = BetweenFlags.get(s_i1, ["{"], ["}"])
-  s_i2 = "Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface..."
-  s_o2 = BetweenFlags.get(s_i2, ["{"], ["}"], false)
-  s_i3 = "Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface..."
-  s_o3 = BetweenFlags.get(s_i3, ["{"], ["}", ")"])
-  s_i4 = "Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface..."
-  s_o4 = BetweenFlags.get(s_i3, ["{"], ["}", ")"], false)
+  s_i1 = "Some text... {GRAB THIS}, some more text {GRAB THIS TOO}..."
+  L_o1 = BetweenFlags.get(s_i1, ["{"], ["}"])
+  s_i2 = "Some text... {GRAB THIS}, some more text {GRAB THIS TOO}..."
+  L_o2 = BetweenFlags.get(s_i2, ["{"], ["}"], false)
+  s_i3 = "Some text... {GRAB THIS), } some more text {GRAB THIS TOO}..."
+  L_o3 = BetweenFlags.get(s_i3, ["{"], ["}", ")"])
+  s_i4 = "Some text... {GRAB THIS), } some more text {GRAB THIS TOO}..."
+  L_o4 = BetweenFlags.get(s_i4, ["{"], ["}", ")"], false)
 
   @testset begin
-      @test s_o1=="{THIS SHOULD BE GRABBED}"
-      @test s_o2=="THIS SHOULD BE GRABBED"
-      @test s_o3=="{THIS SHOULD BE GRABBED)"
-      @test s_o4=="THIS SHOULD BE GRABBED"
+      @test L_o1[1]=="{GRAB THIS}"
+      @test L_o2[1]=="GRAB THIS"
+      @test L_o3[1]=="{GRAB THIS)"
+      @test L_o4[1]=="GRAB THIS"
+      @test L_o1[2]=="{GRAB THIS TOO}"
+      @test L_o2[2]=="GRAB THIS TOO"
+      @test L_o3[2]=="{GRAB THIS TOO}"
+      @test L_o4[2]=="GRAB THIS TOO"
   end
 end
 
