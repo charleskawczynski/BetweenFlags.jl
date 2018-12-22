@@ -1,0 +1,65 @@
+
+# Between Flags
+
+A set of text-parsing utility functions.
+
+| **Build Status**                                                           |
+|:---------------------------------------------------------------------------|
+| [![travis][travis-img]][travis-url] [![codecov][codecov-img]][codecov-url] |
+
+[travis-img]: https://travis-ci.org/charleskawczynski/BetweenFlags.jl.svg?branch=master
+[travis-url]: https://travis-ci.org/charleskawczynski/BetweenFlags.jl
+
+[codecov-img]: https://codecov.io/gh/charleskawczynski/BetweenFlags.jl/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/charleskawczynski/BetweenFlags.jl
+
+## Installation
+
+To install, use
+
+`] add BetweenFlags`
+
+## General form of features
+
+`BetweenFlags` offers some regex-like features of finding,
+and removing, text between given flags. There are several
+versions, as this problem often arises in several contexts.
+Most are og the following form:
+
+`BetweenFlags.get(args...)`
+`BetweenFlags.remove(args...)`
+<!-- `BetweenFlags.replace(args...)` -->
+<!-- `BetweenFlags.prepend(args...)` -->
+<!-- `BetweenFlags.append(args...)` -->
+Where
+`args = [s::String, flags_start::Vector{String}, flags_stop::Vector{String}]`
+
+
+## Greedy functions
+  The greedy version of `BetweenFlags` is needed for processing
+  things like comments, where after opening a comment, the first
+  instance of closing the comment must be recognized.
+
+###  Examples:
+
+`using BetweenFlags`
+`s = "Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface..."`
+`s = BetweenFlags.get(s, ["{"], ["}"])`
+`print(s)`
+`{THIS SHOULD BE GRABBED}`
+
+`s = "Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface..."`
+`s = BetweenFlags.get(s, ["{"], ["}", ")"])`
+`print(s)`
+`{THIS SHOULD BE GRABBED)`
+
+
+## Level-based functions
+  The level-based version of BetweenFlags is needed for things
+  like finding functions, where then "end" of a function should
+  not be confused with the end of an "if" statement inside the
+  function. Therefore, the "level" corresponding to that function
+  should be zero both on the opening and closing of the function.
+
+###  Examples:
+
