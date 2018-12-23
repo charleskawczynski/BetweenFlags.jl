@@ -4,9 +4,12 @@ using BetweenFlags
 function main()
 
   test_merge_odd_even()
-  test_get_alternating_consecutive_list()
+  test_get_alternating_consecutive_vector()
   test_get_between_flags()
   test_remove_between_flags()
+
+  test_get_between_flags_level()
+  test_get_between_flags_level_practical()
 end
 
 function test_merge_odd_even()
@@ -18,7 +21,7 @@ function test_merge_odd_even()
   end
 end
 
-function test_get_alternating_consecutive_list()
+function test_get_alternating_consecutive_vector()
   # This function is a bit difficult to test. Instead
   # of writing tests, the inputs and outputs are
   # be printed to manually ensure that the outputs
@@ -27,7 +30,7 @@ function test_get_alternating_consecutive_list()
   N_A = Base.rand(10:50)[1]
   N_B = Base.rand(10:50)[1]
   if print_IO
-    print("\n ********************************************************** test_get_alternating_consecutive_list \n")
+    print("\n ********************************************************** test_get_alternating_consecutive_vector \n")
     print("N_A = ", N_A,"\n")
     print("N_B = ", N_B,"\n")
   end
@@ -55,7 +58,7 @@ function test_get_alternating_consecutive_list()
     print("B = ", B,"\n")
     print("\n------------------------- Modified\n")
   end
-  (C, D) = BetweenFlags.get_alternating_consecutive_list(A, B)
+  (C, D) = BetweenFlags.get_alternating_consecutive_vector(A, B)
   if print_IO
     print("C = ", C,"\n")
     print("D = ", D,"\n")
@@ -87,6 +90,59 @@ function test_get_between_flags()
       @test L_o2[2]=="GRAB THIS TOO"
       @test L_o3[2]=="{GRAB THIS TOO}"
       @test L_o4[2]=="GRAB THIS TOO"
+  end
+end
+
+function test_get_between_flags_level()
+  s_i1 = "Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}..."
+  L_o1 = BetweenFlags.get_level(s_i1, ["{"], ["}"])
+  s_i2 = "Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}..."
+  L_o2 = BetweenFlags.get_level(s_i2, ["{"], ["}"], false)
+  s_i3 = "Some text... {GRAB {THIS}), } some more text {GRAB THIS TOO}..."
+  L_o3 = BetweenFlags.get_level(s_i3, ["{"], ["}", ")"])
+  s_i4 = "Some text... {GRAB {THIS}), } some more text {GRAB THIS TOO}..."
+  L_o4 = BetweenFlags.get_level(s_i4, ["{"], ["}", ")"], false)
+
+  @testset begin
+      @test L_o1[1]=="{GRAB {THIS}}"
+      @test L_o2[1]=="GRAB {THIS}"
+      @test L_o3[1]=="{GRAB {THIS})"
+      @test L_o4[1]=="GRAB {THIS}"
+      @test L_o1[2]=="{GRAB THIS TOO}"
+      @test L_o2[2]=="GRAB THIS TOO"
+      @test L_o3[2]=="{GRAB THIS TOO}"
+      @test L_o4[2]=="GRAB THIS TOO"
+  end
+end
+
+function test_get_between_flags_level_practical()
+  s_i = ""
+  s_i = string(s_i, "\n", "Some text")
+  s_i = string(s_i, "\n", "function myfunc()")
+  s_i = string(s_i, "\n", "  more stuff")
+  s_i = string(s_i, "\n", "  if something")
+  s_i = string(s_i, "\n", "    print('something')")
+  s_i = string(s_i, "\n", "  else")
+  s_i = string(s_i, "\n", "    print('not something')")
+  s_i = string(s_i, "\n", "  end")
+  s_i = string(s_i, "\n", "  more stuff")
+  s_i = string(s_i, "\n", "end")
+  s_i = string(s_i, "\n", "more text")
+  L_o = BetweenFlags.get_level(s_i, ["function ", "if "], [" end", "\nend"])
+
+  s_o = ""
+  s_o = string(s_o,       "function myfunc()")
+  s_o = string(s_o, "\n", "  more stuff")
+  s_o = string(s_o, "\n", "  if something")
+  s_o = string(s_o, "\n", "    print('something')")
+  s_o = string(s_o, "\n", "  else")
+  s_o = string(s_o, "\n", "    print('not something')")
+  s_o = string(s_o, "\n", "  end")
+  s_o = string(s_o, "\n", "  more stuff")
+  s_o = string(s_o, "\n", "end")
+
+  @testset begin
+      @test L_o[1]==s_o
   end
 end
 

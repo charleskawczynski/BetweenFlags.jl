@@ -36,21 +36,27 @@ function merge_even_odd(odd::Vector{Int64}, even::Vector{Int64})
   return [odd even]'[:]
 end
 
-function get_alternating_consecutive_list(A::Vector{Int64}, B::Vector{Int64})
+function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, level=nothing)
+  if level == nothing
+    level = zero(1:max(A..., B...))
+  end
   L = Vector{Int64}(undef, 0)
   e = Vector{Int64}(undef, 0)
   (C, D) = Tuple([e, e])
   B_available = B
   if length(A) > 0 && length(B) > 0
-    b_last = B[1]
-    for a in A
+    b_previous = B[1]
+    j_previous = 1
+    for (i, a) in enumerate(A)
       found = false
-      for b in B_available
-        if ( b > a && a > b_last ) || ( b > a && a == A[1] ) && !found
+      for (j, b) in enumerate(B_available)
+        cond = ( b > a && a > b_previous ) || ( b > a && a == A[1] ) && !found && level[a]==level[b]
+        if cond
           push!(L, a)
           push!(L, b)
-          B_available = [x for x in B_available if x > b_last]
-          b_last = b
+          B_available = [x for x in B_available if x > b_previous]
+          b_previous = b
+          j_previous = j
           found = true
         end
       end
@@ -74,6 +80,28 @@ function substring_decomp_by_index(s::String, i_start::Int, i_end::Int, flags_st
     after = s[i_end:end]
   end
   return before, middle, after
+end
+
+function compute_level(s::String, flags_start::svec, flags_stop::svec)
+  level = zero(1:length(s))
+  L_s = length(s)
+  D_o = Dict(x => length(x) for x in flags_start)
+  D_c = Dict(x => length(x) for x in flags_stop)
+  L_c_arr = [v for (k, v) in D_o]
+  L_o_arr = [v for (k, v) in D_c]
+  L_delim_max = max([max(L_o_arr...), max(L_c_arr...)]...)
+  L_delim_min = min([min(L_o_arr...), min(L_c_arr...)]...)
+  if L_s>L_delim_min
+    for i in 1:L_s-L_delim_max
+      if any([s[i:i+D_o[x]-1] == x for x in flags_start])
+        level[i:end] .= level[i:end] .+ 1
+      elseif any([s[i:i+D_c[x]-1] == x for x in flags_stop])
+        # level[i:end] .= level[i:end] .- 1
+        level[i+1:end] .= level[i+1:end] .- 1
+      end
+    end
+  end
+  return level
 end
 
 function get_remaining_flags(s::String, flags_start::svec, flags_stop::svec)::Bool
@@ -100,7 +128,28 @@ function get(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = t
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
   sort!(L_start)
   sort!(L_stop)
-  (L_start, L_stop) = get_alternating_consecutive_list(L_start, L_stop)
+  if L_start==[] || L_stop==[]
+    return []
+  end
+  (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop, nothing)
+  for (i_start, i_stop) in zip(L_start, L_stop)
+    b, m, a = substring_decomp_by_index(s, i_start, i_stop, flags_start, flags_stop, inclusive)
+    push!(L, m)
+  end
+  return L
+end
+
+function get_level(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true)
+  L = Vector{String}(undef, 0)
+  L_start = [m for flag_start in flags_start for m in find_next_iter(s, flag_start)]
+  L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
+  sort!(L_start)
+  sort!(L_stop)
+  if L_start==[] || L_stop==[]
+    return []
+  end
+  level = compute_level(s, flags_start, flags_stop)
+  (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop, level)
   for (i_start, i_stop) in zip(L_start, L_stop)
     b, m, a = substring_decomp_by_index(s, i_start, i_stop, flags_start, flags_stop, inclusive)
     push!(L, m)
@@ -121,7 +170,7 @@ function remove(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool 
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
   sort!(L_start)
   sort!(L_stop)
-  (L_start, L_stop) = get_alternating_consecutive_list(L_start, L_stop)
+  (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop, nothing)
   s_new = s
   for (i_start, i_stop) in zip(reverse(L_start), reverse(L_stop))
     b, m, a = substring_decomp_by_index(s_new, i_start, i_stop, flags_start, flags_stop, inclusive)
