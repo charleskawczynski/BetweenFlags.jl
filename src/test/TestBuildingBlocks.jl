@@ -1,4 +1,5 @@
 using Test
+include(joinpath(pwd(), "includes.jl"))
 using PerFlagFuncs
 
 function main()

@@ -1,4 +1,5 @@
 using Test
+include(joinpath(pwd(), "includes.jl"))
 using BetweenFlags
 
 function main()
