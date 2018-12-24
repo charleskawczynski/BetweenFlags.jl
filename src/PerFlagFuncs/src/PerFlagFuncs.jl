@@ -39,9 +39,12 @@ function merge_even_odd(odd::Vector{Int64}, even::Vector{Int64})
   return [odd even]'[:]
 end
 
-function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, level=nothing)
+function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, level=nothing, level_outer=nothing)
   if level == nothing
     level = zero(1:max(A..., B...))
+  end
+  if level_outer == nothing
+    level_outer = zero(1:max(A..., B...))
   end
   L = Vector{Int64}(undef, 0)
   e = Vector{Int64}(undef, 0)

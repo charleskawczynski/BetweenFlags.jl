@@ -2,7 +2,21 @@ module BetweenFlags
 
 using PerFlagFuncs
 
+export Flag
+export FlagSet
+
 svec = Vector{String}
+
+struct Flag
+  word :: String
+  word_boundaries_left :: Vector{String}
+  word_boundaries_right :: Vector{String}
+end
+
+struct FlagSet
+  start :: Flag
+  stop  :: Flag
+end
 
 function substring_decomp_by_index(s::String, i_start::Int, i_end::Int, flags_start::svec, flags_stop::svec, inclusive::Bool = true)
   if inclusive # middle and after depend on length of stop flag (LSTOP)...
@@ -67,7 +81,7 @@ function get(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = t
   if L_start==[] || L_stop==[]
     return []
   end
-  (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop, nothing)
+  (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop)
   for (i_start, i_stop) in zip(L_start, L_stop)
     b, m, a = substring_decomp_by_index(s, i_start, i_stop, flags_start, flags_stop, inclusive)
     push!(L, m)
@@ -93,6 +107,46 @@ function get_level(s::String, flags_start::svec, flags_stop::svec, inclusive::Bo
   return L
 end
 
+function add_word_boundaries_flags_start(flag_set)
+  flag_set_all = []
+  flag_set_all = vcat(flag_set_all, [string(left, flag_set.start.word, right) for left  in flag_set.start.word_boundaries_left
+                                                                              for right in flag_set.start.word_boundaries_right])
+  return flag_set_all
+end
+
+function add_word_boundaries_flags_stop(flag_set)
+  flag_set_all = []
+  flag_set_all = vcat(flag_set_all, [string(left, flag_set.stop.word, right) for left  in flag_set.stop.word_boundaries_left
+                                                                             for right in flag_set.stop.word_boundaries_right])
+  return flag_set_all
+end
+
+function get_level_new(s::String, outer_flags::FlagSet, inner_flags::Vector{FlagSet}, inclusive::Bool = true)
+  L = Vector{String}(undef, 0)
+  out_flags_start = add_word_boundaries_flags_start(outer_flags)
+  out_flags_stop = add_word_boundaries_flags_stop(outer_flags)
+  in_flags_start = [add_word_boundaries_flags_start(x) for x in inner_flags]
+  in_flags_stop = [add_word_boundaries_flags_stop(x) for x in inner_flags]
+
+  flags_start = vcat(out_flags_start, in_flags_start)
+  flags_stop  = vcat(out_flags_stop , in_flags_stop)
+  L_start = [m for flag_start in flags_start for m in find_next_iter(s, flag_start)]
+  L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
+  sort!(L_start)
+  sort!(L_stop)
+  if L_start==[] || L_stop==[]
+    return []
+  end
+  level = compute_level(s, flags_start, flags_stop)
+  level_outer = compute_level(s, out_flags_start, out_flags_stop)
+  (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop, level, level_outer)
+  for (i_start, i_stop) in zip(L_start, L_stop)
+    b, m, a = substring_decomp_by_index(s, i_start, i_stop, flags_start, flags_stop, inclusive)
+    push!(L, m)
+  end
+  return L
+end
+
 function remove(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true, reverse_order::Bool = false)
   """ remove_between_flags (RBF) is fundamentally different from get_between_flags (GBF) because
         the string, s, in GBF does not change, whereas it does in RBG. Therefore, the indexes found
@@ -106,7 +160,7 @@ function remove(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool 
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
   sort!(L_start)
   sort!(L_stop)
-  (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop, nothing)
+  (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop)
   s_new = s
   for (i_start, i_stop) in zip(reverse(L_start), reverse(L_stop))
     b, m, a = substring_decomp_by_index(s_new, i_start, i_stop, flags_start, flags_stop, inclusive)

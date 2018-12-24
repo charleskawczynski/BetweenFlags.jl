@@ -10,6 +10,8 @@ function main()
 
   test_get_between_flags_level()
   test_get_between_flags_level_practical()
+
+  # test_get_between_flags_level_practical_complex()
 end
 
 function test_get_between_flags()
@@ -81,6 +83,69 @@ function test_get_between_flags_level_practical()
   s_o = string(s_o, "\n", "  end")
   s_o = string(s_o, "\n", "  more stuff")
   s_o = string(s_o, "\n", "end")
+
+  @testset begin
+      @test L_o[1]==s_o
+  end
+end
+
+function test_get_between_flags_level_practical_complex()
+  s_i = ""
+  s_i = string(s_i, "\n", "Some text")
+  s_i = string(s_i, "\n", "if something")
+  s_i = string(s_i, "\n", "  function myfunc()")
+  s_i = string(s_i, "\n", "    more stuff")
+  s_i = string(s_i, "\n", "    if something")
+  s_i = string(s_i, "\n", "      print('something')")
+  s_i = string(s_i, "\n", "    else")
+  s_i = string(s_i, "\n", "      print('not something')")
+  s_i = string(s_i, "\n", "    end")
+  s_i = string(s_i, "\n", "    for something")
+  s_i = string(s_i, "\n", "      print('something')")
+  s_i = string(s_i, "\n", "    else")
+  s_i = string(s_i, "\n", "      print('not something')")
+  s_i = string(s_i, "\n", "    end")
+  s_i = string(s_i, "\n", "    more stuff")
+  s_i = string(s_i, "\n", "  end")
+  s_i = string(s_i, "\n", "end")
+  s_i = string(s_i, "\n", "more text")
+
+  word_boundaries_left = ["\n", " ", ";"]
+  word_boundaries_right = ["\n", " ", ";"]
+  word_boundaries_right_if = [" ", ";"]
+
+  FS_outer = FlagSet(
+    Flag(["function"], word_boundaries_left, word_boundaries_right),
+    Flag(["end"],      word_boundaries_left, word_boundaries_right)
+  )
+
+  FS_inner = [
+  FlagSet(
+    Flag(["if"],       word_boundaries_left, word_boundaries_right_if),
+    Flag(["end"],      word_boundaries_left, word_boundaries_right)
+  ),
+  FlagSet(
+    Flag(["for"],      word_boundaries_left, word_boundaries_right),
+    Flag(["end"],      word_boundaries_left, word_boundaries_right)
+  )]
+
+  L_o = BetweenFlags.get_level_new(s_i, FS_outer, FS_inner)
+
+  s_o = ""
+  s_o = string(s_o,       "function myfunc()")
+  s_o = string(s_o, "\n", "    more stuff")
+  s_o = string(s_o, "\n", "    if something")
+  s_o = string(s_o, "\n", "      print('something')")
+  s_o = string(s_o, "\n", "    else")
+  s_o = string(s_o, "\n", "      print('not something')")
+  s_o = string(s_o, "\n", "    end")
+  s_o = string(s_o, "\n", "    for something")
+  s_o = string(s_o, "\n", "      print('something')")
+  s_o = string(s_o, "\n", "    else")
+  s_o = string(s_o, "\n", "      print('not something')")
+  s_o = string(s_o, "\n", "    end")
+  s_o = string(s_o, "\n", "    more stuff")
+  s_o = string(s_o, "\n", "  end")
 
   @testset begin
       @test L_o[1]==s_o
