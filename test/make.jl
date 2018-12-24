@@ -1,11 +1,5 @@
 function main()
-  if Sys.isunix()
-    path_separator = "/"
-  elseif Sys.iswindows()
-    path_separator = "\\"
-  else
-    error("path primitives for this OS need to be defined")
-  end
+  path_separator = Sys.iswindows() ? "\\" : "/"
 
   up = ".."*path_separator
   code_dir = up*"src"*path_separator

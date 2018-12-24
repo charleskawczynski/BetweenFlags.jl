@@ -8,13 +8,7 @@ function is_test_folder(f, path_separator)
 end
 
 function main()
-  if Sys.isunix()
-    path_separator = "/"
-  elseif Sys.iswindows()
-    path_separator = "\\"
-  else
-    error("path primitives for this OS need to be defined")
-  end
+  path_separator = Sys.iswindows() ? "\\" : "/"
 
   up = ".."*path_separator
   root_dir = @__DIR__
