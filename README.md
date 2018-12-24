@@ -1,7 +1,6 @@
+# BetweenFlags.jl
 
-# Between Flags
-
-A set of text-parsing utility functions.
+A set of string processing utility functions that finds/removes text between given flags.
 
 | **Build Status**                                                           |
 |:---------------------------------------------------------------------------|
