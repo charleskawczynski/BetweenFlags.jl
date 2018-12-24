@@ -79,11 +79,6 @@ version = "0.6.6"
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
-[[PerFlagFuncs]]
-path = "src\\PerFlagFuncs"
-uuid = "f3ab5380-06f0-11e9-0fb8-bff16a246b5f"
-version = "0.1.0"
-
 [[Pkg]]
 deps = ["Dates", "LibGit2", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"

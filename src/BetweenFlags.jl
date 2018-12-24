@@ -1,5 +1,6 @@
 module BetweenFlags
 
+push!(LOAD_PATH, "./PerFlagFuncs/src/")
 using PerFlagFuncs
 
 export Flag
