@@ -4,5 +4,6 @@ authors = ["Charles_Kawczynski <kawczynski.charles@gmail.com>"]
 version = "0.1.0"
 
 [deps]
+Coverage = "a2441757-f6aa-5fb2-8edb-039e3f45d037"
 PerFlagFuncs = "f3ab5380-06f0-11e9-0fb8-bff16a246b5f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
