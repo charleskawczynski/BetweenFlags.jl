@@ -2,12 +2,15 @@
 
 A set of string processing utility functions that finds/removes text between given flags.
 
-| **Build Status**                                                           |
-|:---------------------------------------------------------------------------|
-| [![travis][travis-img]][travis-url] [![codecov][codecov-img]][codecov-url] |
+| **Build Status**                                                                                                     |
+|:---------------------------------------------------------------------------------------------------------------------|
+| [![travis][travis-img]][travis-url] [![appveyor][appveyor-img]][appveyor-url] [![codecov][codecov-img]][codecov-url] |
 
 [travis-img]: https://travis-ci.org/charleskawczynski/BetweenFlags.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/charleskawczynski/BetweenFlags.jl
+
+[appveyor-img]: https://ci.appveyor.com/api/projects/status/ca6lgtt9f8e42o4f?svg=true
+[appveyor-url]: https://ci.appveyor.com/project/charleskawczynski/betweenflags-jl
 
 [codecov-img]: https://codecov.io/gh/charleskawczynski/BetweenFlags.jl/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/charleskawczynski/BetweenFlags.jl
