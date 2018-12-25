@@ -31,7 +31,9 @@ function main()
   all_files = [x for x in all_files if split(x, ".")[end]=="jl"] # only .jl files
 
   # Generate include file for tests:
+  run(`tree .`)
   run(`julia $(joinpath(@__DIR__, "make.jl"))`)
+  # run(`include($(joinpath(@__DIR__, "make.jl")))`)
   include("includes.jl")
 
   # Code coverage command line options; must correspond to src/julia.h
