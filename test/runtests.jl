@@ -23,9 +23,6 @@ function main()
   this_file = split(this_file, path_separator)[end-1:end]
   this_file = code_dir*joinpath(this_file...)
 
-  all_files_root = [joinpath([root,f]...) for (root, dirs, files) in Base.Filesystem.walkdir(root_dir) for f in files]
-  all_files_root = [x for x in all_files_root if split(x, ".")[end]=="jl"] # only .jl files
-
   folders_to_exclude = []
   all_files = [joinpath([root,f]...) for (root, dirs, files) in Base.Filesystem.walkdir(code_dir) for f in files]
   all_files = [x for x in all_files if ! any([occursin(y, x) for y in folders_to_exclude])]
