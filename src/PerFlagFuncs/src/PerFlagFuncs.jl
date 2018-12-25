@@ -5,14 +5,21 @@ export find_next_iter
 export merge_even_odd
 export get_alternating_consecutive_vector
 
-function count_flags(s::String, needle::String)
+"""
+
+count_flags(s::String, needle::String)
+
+Counts number of flags in a given string.
+
+"""
+function count_flags(s::String, flags::String)
   cnt = 0
-  LN = length(needle)
+  LN = length(flags)
   LS = length(s)
   if LN <= LS
     for i in 1:LS-LN+1
       substr = s[i:i+LN-1]
-      if needle==substr
+      if flags==substr
         cnt += 1
       end
     end
