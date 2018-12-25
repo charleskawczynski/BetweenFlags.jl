@@ -2,9 +2,12 @@
 
 A set of string processing utility functions that finds/removes text between given flags.
 
-| **Build Status**                                                                                                     |
-|:---------------------------------------------------------------------------------------------------------------------|
-| [![travis][travis-img]][travis-url] [![appveyor][appveyor-img]][appveyor-url] [![codecov][codecov-img]][codecov-url] |
+| **Documentation**                             | **Build Status**                                                                                                     |
+|:--------------------------------------------- |:---------------------------------------------------------------------------------------------------------------------|
+| [![latest][docs-latest-img]][docs-latest-url] | [![travis][travis-img]][travis-url] [![appveyor][appveyor-img]][appveyor-url] [![codecov][codecov-img]][codecov-url] |
+
+[docs-latest-img]: https://img.shields.io/badge/docs-latest-blue.svg
+[docs-latest-url]: https://charleskawczynski.github.io/BetweenFlags.jl/latest/
 
 [travis-img]: https://travis-ci.org/charleskawczynski/BetweenFlags.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/charleskawczynski/BetweenFlags.jl
@@ -28,12 +31,13 @@ and removing, text between given flags. There are several
 versions, as this problem often arises in several contexts.
 Most are og the following form:
 
-`BetweenFlags.get(args...)`
-`BetweenFlags.remove(args...)`
-<!-- `BetweenFlags.replace(args...)` -->
-<!-- `BetweenFlags.prepend(args...)` -->
-<!-- `BetweenFlags.append(args...)` -->
+```
+BetweenFlags.get(args...)
+BetweenFlags.remove(args...)
+```
+
 Where
+
 `args = [s::String, flags_start::Vector{String}, flags_stop::Vector{String}]`
 
 
@@ -44,17 +48,17 @@ Where
 
 ###  Examples:
 
-`using BetweenFlags`
-`s = "Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface..."`
-`s = BetweenFlags.get(s, ["{"], ["}"])`
-`print(s)`
-`{THIS SHOULD BE GRABBED}`
-
-`s = "Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface..."`
-`s = BetweenFlags.get(s, ["{"], ["}", ")"])`
-`print(s)`
-`{THIS SHOULD BE GRABBED)`
-
+```
+using BetweenFlags
+s = "Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface..."
+s = BetweenFlags.get(s, ["{"], ["}"])
+print(s)
+{THIS SHOULD BE GRABBED}
+s = "Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface..."
+s = BetweenFlags.get(s, ["{"], ["}", ")"])
+print(s)
+{THIS SHOULD BE GRABBED)
+```
 
 ## Level-based functions
   The level-based version of BetweenFlags is needed for things

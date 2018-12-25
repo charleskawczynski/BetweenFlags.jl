@@ -1,15 +1,24 @@
 using Documenter
+push!(LOAD_PATH,"../src/")
 using BetweenFlags
 
 makedocs(
-    sitename = "BetweenFlags",
-    format = :html,
-    modules = [BetweenFlags]
+  sitename = "BetweenFlags",
+  format = :html,
+  modules = [BetweenFlags, PerFlagFuncs],
+  pages = [
+  "Home" => "index.md",
+  "Functions" => [
+               "Functions/Greedy.md",
+               "Functions/LevelBased.md",
+              ],
+  ]
+    ],
+  Documenter.HTML(
+    prettyurls = get(ENV, "CI", nothing) == "true"
+  )
 )
 
-# Documenter can also automatically deploy documentation to gh-pages.
-# See "Hosting Documentation" and deploydocs() in the Documenter manual
-# for more information.
-#=deploydocs(
-    repo = "<repository url>"
-)=#
+deploydocs(
+           repo = "github.com/charleskawczynski/BetweenFlags.jl.git",
+          )
