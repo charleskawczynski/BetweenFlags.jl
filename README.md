@@ -32,11 +32,11 @@ versions, as this problem often arises in several contexts.
 Most are og the following form:
 
 `BetweenFlags.get(args...)`
+
 `BetweenFlags.remove(args...)`
-<!-- `BetweenFlags.replace(args...)` -->
-<!-- `BetweenFlags.prepend(args...)` -->
-<!-- `BetweenFlags.append(args...)` -->
+
 Where
+
 `args = [s::String, flags_start::Vector{String}, flags_stop::Vector{String}]`
 
 
@@ -48,14 +48,21 @@ Where
 ###  Examples:
 
 `using BetweenFlags`
+
 `s = "Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface..."`
+
 `s = BetweenFlags.get(s, ["{"], ["}"])`
+
 `print(s)`
+
 `{THIS SHOULD BE GRABBED}`
 
 `s = "Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface..."`
+
 `s = BetweenFlags.get(s, ["{"], ["}", ")"])`
+
 `print(s)`
+
 `{THIS SHOULD BE GRABBED)`
 
 

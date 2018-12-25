@@ -1,10 +1,14 @@
 using Documenter
+push!(LOAD_PATH,"../src/")
 using BetweenFlags
 
 makedocs(
-    sitename = "BetweenFlags",
-    format = :html,
-    modules = [BetweenFlags]
+  sitename = "BetweenFlags",
+  format = :html,
+  modules = [BetweenFlags]
+  Documenter.HTML(
+    prettyurls = get(ENV, "CI", nothing) == "true"
+  )
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.
