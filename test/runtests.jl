@@ -1,4 +1,6 @@
 using Test
+push!(LOAD_PATH, "./")
+using MakeIncludes
 
 function is_test_folder(f, path_separator)
   a = split(f, path_separator)
@@ -34,21 +36,8 @@ function main()
   all_files = [x for x in all_files if split(x, ".")[end]=="jl"] # only .jl files
 
   # Generate include file for tests:
-  print("\n homedir()                   = ", homedir(), "\n")
-  print("\n pwd()                       = ", pwd(), "\n")
-  print("\n @__DIR__                    = ", @__DIR__, "\n")
-  print("\n joinpath(pwd(), make.jl)    = ", joinpath(pwd(), "make.jl"), "\n")
-  print("\n joinpath(@__DIR__, make.jl) = ", joinpath(@__DIR__, "make.jl"), "\n")
-  # run(`cd ..`)
-  print("\nall_files_root = \n")
-  for x in all_files_root
-    print(x, "\n")
-  end
-
-  # run(`tree .`)
-  run(`julia $(joinpath(@__DIR__, "make.jl"))`)
-  # run(`include($(joinpath(@__DIR__, "make.jl")))`)
-  include("includes.jl")
+  MakeIncludes.make()
+  include("Includes.jl")
 
   # Code coverage command line options; must correspond to src/julia.h
   # and src/ui/repl.c

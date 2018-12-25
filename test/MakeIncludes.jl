@@ -1,4 +1,6 @@
-function main()
+module MakeIncludes
+
+function make()
   path_separator = Sys.iswindows() ? "\\" : "/"
 
   up = ".."*path_separator
@@ -24,7 +26,7 @@ function main()
   # end
   # print("********************\n")
 
-  open("includes.jl", "w") do file
+  open("Includes.jl", "w") do file
     for f in all_folders
       write(file, "push!(LOAD_PATH, \"", f,"\")\n")
     end
@@ -32,6 +34,4 @@ function main()
 
 end
 
-if abspath(PROGRAM_FILE) == @__FILE__
-  main()
 end
