@@ -31,9 +31,10 @@ and removing, text between given flags. There are several
 versions, as this problem often arises in several contexts.
 Most are og the following form:
 
-`BetweenFlags.get(args...)`
-
-`BetweenFlags.remove(args...)`
+```
+BetweenFlags.get(args...)
+BetweenFlags.remove(args...)
+```
 
 Where
 
@@ -47,24 +48,17 @@ Where
 
 ###  Examples:
 
-`using BetweenFlags`
-
-`s = "Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface..."`
-
-`s = BetweenFlags.get(s, ["{"], ["}"])`
-
-`print(s)`
-
-`{THIS SHOULD BE GRABBED}`
-
-`s = "Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface..."`
-
-`s = BetweenFlags.get(s, ["{"], ["}", ")"])`
-
-`print(s)`
-
-`{THIS SHOULD BE GRABBED)`
-
+```
+using BetweenFlags
+s = "Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface..."
+s = BetweenFlags.get(s, ["{"], ["}"])
+print(s)
+{THIS SHOULD BE GRABBED}
+s = "Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface..."
+s = BetweenFlags.get(s, ["{"], ["}", ")"])
+print(s)
+{THIS SHOULD BE GRABBED)
+```
 
 ## Level-based functions
   The level-based version of BetweenFlags is needed for things
