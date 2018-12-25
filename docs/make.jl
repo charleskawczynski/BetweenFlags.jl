@@ -1,6 +1,8 @@
-using Documenter
+Base.HOME_PROJECT[] = abspath(Base.HOME_PROJECT[]) # JuliaLang/julia/pull/28625
+push!(LOAD_PATH,"../")
 push!(LOAD_PATH,"../src/")
-using BetweenFlags
+
+using Documenter, BetweenFlags
 
 makedocs(
   sitename = "BetweenFlags",
