@@ -6,7 +6,7 @@ makedocs(
   sitename = "BetweenFlags",
   format = :html,
   modules = [BetweenFlags, PerFlagFuncs],
-  pages = [
+  pages = Any[
   "Home" => "index.md",
   "Functions" => [
                "Functions/Greedy.md",
