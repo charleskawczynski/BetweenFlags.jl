@@ -21,6 +21,9 @@ function main()
   this_file = split(this_file, path_separator)[end-1:end]
   this_file = code_dir*joinpath(this_file...)
 
+  all_files_root = [joinpath([root,f]...) for (root, dirs, files) in Base.Filesystem.walkdir(root_dir) for f in files]
+  all_files_root = [x for x in all_files_root if split(x, ".")[end]=="jl"] # only .jl files
+
   folders_to_exclude = []
   all_files = [joinpath([root,f]...) for (root, dirs, files) in Base.Filesystem.walkdir(code_dir) for f in files]
   all_files = [x for x in all_files if ! any([occursin(y, x) for y in folders_to_exclude])]
@@ -31,7 +34,18 @@ function main()
   all_files = [x for x in all_files if split(x, ".")[end]=="jl"] # only .jl files
 
   # Generate include file for tests:
-  run(`tree .`)
+  print("\n homedir()                   = ", homedir(), "\n")
+  print("\n pwd()                       = ", pwd(), "\n")
+  print("\n @__DIR__                    = ", @__DIR__, "\n")
+  print("\n joinpath(pwd(), make.jl)    = ", joinpath(pwd(), "make.jl"), "\n")
+  print("\n joinpath(@__DIR__, make.jl) = ", joinpath(@__DIR__, "make.jl"), "\n")
+  # run(`cd ..`)
+  print("\nall_files_root = \n")
+  for x in all_files_root
+    print(x, "\n")
+  end
+
+  # run(`tree .`)
   run(`julia $(joinpath(@__DIR__, "make.jl"))`)
   # run(`include($(joinpath(@__DIR__, "make.jl")))`)
   include("includes.jl")
