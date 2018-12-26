@@ -12,7 +12,7 @@ function main()
   test_get_between_flags_level()
   test_get_between_flags_level_practical()
 
-  # test_get_between_flags_level_practical_complex()
+  test_get_between_flags_level_practical_complex()
 end
 
 function test_get_between_flags()
@@ -116,18 +116,18 @@ function test_get_between_flags_level_practical_complex()
   word_boundaries_right_if = [" ", ";"]
 
   FS_outer = FlagSet(
-    Flag(["function"], word_boundaries_left, word_boundaries_right),
-    Flag(["end"],      word_boundaries_left, word_boundaries_right)
+    Flag("function", word_boundaries_left, word_boundaries_right),
+    Flag("end",      word_boundaries_left, word_boundaries_right)
   )
 
   FS_inner = [
   FlagSet(
-    Flag(["if"],       word_boundaries_left, word_boundaries_right_if),
-    Flag(["end"],      word_boundaries_left, word_boundaries_right)
+    Flag("if",       word_boundaries_left, word_boundaries_right_if),
+    Flag("end",      word_boundaries_left, word_boundaries_right)
   ),
   FlagSet(
-    Flag(["for"],      word_boundaries_left, word_boundaries_right),
-    Flag(["end"],      word_boundaries_left, word_boundaries_right)
+    Flag("for",      word_boundaries_left, word_boundaries_right),
+    Flag("end",      word_boundaries_left, word_boundaries_right)
   )]
 
   L_o = BetweenFlags.get_level_new(s_i, FS_outer, FS_inner)
@@ -147,6 +147,11 @@ function test_get_between_flags_level_practical_complex()
   s_o = string(s_o, "\n", "    end")
   s_o = string(s_o, "\n", "    more stuff")
   s_o = string(s_o, "\n", "  end")
+  print("\n =========================================== s_o \n")
+  print(s_o)
+  print("\n =========================================== L_o[1] \n")
+  print(L_o[1])
+  print("\n =========================================== \n")
 
   @testset begin
       @test L_o[1]==s_o

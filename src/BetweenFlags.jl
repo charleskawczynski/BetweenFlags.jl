@@ -35,8 +35,8 @@ function substring_decomp_by_index(s::String, i_start::Int, i_end::Int, flags_st
 end
 
 function compute_level(s::String, flags_start::svec, flags_stop::svec)
-  level = zero(1:length(s))
   L_s = length(s)
+  level = zeros(Int, L_s)
   D_o = Dict(x => length(x) for x in flags_start)
   D_c = Dict(x => length(x) for x in flags_stop)
   L_c_arr = [v for (k, v) in D_o]
@@ -74,13 +74,13 @@ function get_remaining_flags(s::String, flags_start::svec, flags_stop::svec)::Bo
 end
 
 function get(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true)
-  L = Vector{String}(undef, 0)
+  L = Vector{String}()
   L_start = [m for flag_start in flags_start for m in find_next_iter(s, flag_start)]
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
   sort!(L_start)
   sort!(L_stop)
   if L_start==[] || L_stop==[]
-    return []
+    return L
   end
   (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop)
   for (i_start, i_stop) in zip(L_start, L_stop)
@@ -91,13 +91,13 @@ function get(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = t
 end
 
 function get_level(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true)
-  L = Vector{String}(undef, 0)
+  L = Vector{String}()
   L_start = [m for flag_start in flags_start for m in find_next_iter(s, flag_start)]
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
   sort!(L_start)
   sort!(L_stop)
   if L_start==[] || L_stop==[]
-    return []
+    return L
   end
   level = compute_level(s, flags_start, flags_stop)
   (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop, level)
@@ -109,38 +109,44 @@ function get_level(s::String, flags_start::svec, flags_stop::svec, inclusive::Bo
 end
 
 function add_word_boundaries_flags_start(flag_set)
-  flag_set_all = []
-  flag_set_all = vcat(flag_set_all, [string(left, flag_set.start.word, right) for left  in flag_set.start.word_boundaries_left
-                                                                              for right in flag_set.start.word_boundaries_right])
+  flag_set_all = Vector{String}()
+  for left in flag_set.start.word_boundaries_left
+    for right in flag_set.start.word_boundaries_right
+      push!(flag_set_all, string(left, flag_set.start.word, right))
+    end
+  end
   return flag_set_all
 end
 
 function add_word_boundaries_flags_stop(flag_set)
-  flag_set_all = []
-  flag_set_all = vcat(flag_set_all, [string(left, flag_set.stop.word, right) for left  in flag_set.stop.word_boundaries_left
-                                                                             for right in flag_set.stop.word_boundaries_right])
+  flag_set_all = Vector{String}()
+  for left in flag_set.stop.word_boundaries_left
+    for right in flag_set.stop.word_boundaries_right
+      push!(flag_set_all, string(left, flag_set.stop.word, right))
+    end
+  end
   return flag_set_all
 end
 
 function get_level_new(s::String, outer_flags::FlagSet, inner_flags::Vector{FlagSet}, inclusive::Bool = true)
-  L = Vector{String}(undef, 0)
-  out_flags_start = add_word_boundaries_flags_start(outer_flags)
-  out_flags_stop = add_word_boundaries_flags_stop(outer_flags)
-  in_flags_start = [add_word_boundaries_flags_start(x) for x in inner_flags]
-  in_flags_stop = [add_word_boundaries_flags_stop(x) for x in inner_flags]
+  L = Vector{String}()
+  outer_flags_start = add_word_boundaries_flags_start(outer_flags)
+  outer_flags_stop = add_word_boundaries_flags_stop(outer_flags)
+  inner_flags_start = [y for x in inner_flags for y in add_word_boundaries_flags_start(x)]
+  inner_flags_stop  = [y for x in inner_flags for y in add_word_boundaries_flags_stop(x)]
 
-  flags_start = vcat(out_flags_start, in_flags_start)
-  flags_stop  = vcat(out_flags_stop , in_flags_stop)
+  flags_start = vcat(outer_flags_start, inner_flags_start)
+  flags_stop  = vcat(outer_flags_stop , inner_flags_stop)
   L_start = [m for flag_start in flags_start for m in find_next_iter(s, flag_start)]
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
   sort!(L_start)
   sort!(L_stop)
   if L_start==[] || L_stop==[]
-    return []
+    return L
   end
   level = compute_level(s, flags_start, flags_stop)
-  level_outer = compute_level(s, out_flags_start, out_flags_stop)
-  (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop, level, level_outer)
+  level_outer = compute_level(s, outer_flags_start, outer_flags_stop)
+  (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop, level, level_outer, s)
   for (i_start, i_stop) in zip(L_start, L_stop)
     b, m, a = substring_decomp_by_index(s, i_start, i_stop, flags_start, flags_stop, inclusive)
     push!(L, m)
