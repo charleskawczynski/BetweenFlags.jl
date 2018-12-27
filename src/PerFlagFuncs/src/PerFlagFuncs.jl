@@ -110,16 +110,11 @@ function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, 
         print("\n ----------------------------------- new B_available\n")
       end
       for (j, b) in enumerate(B_available)
-        # cond_outer = level_outer_given ? level_outer[a]==level_outer[b] : true
-        # cond_outer = level_outer_given ? level_outer[a]==1 && level_outer[b]==1 : true
         cond_outer = level_outer_given ? level_outer[a]==1 && level_outer[a-1]==0 && level_outer[b]==1 && level_outer[b+1]==0 : true
         cond_total = level_total[a]==level_total[b]
-        # cond_incr = ( b > a && a > b_previous ) || ( b > a && a == A[1] )
-        # cond_incr = (b > a) && ( a > b_previous || a == A[1] )
         cond_i1 = (b > a)
         cond_i2 = ( true || a == A[1] )
         cond_incr = cond_i1 && cond_i2
-        # cond_incr = ( b > a && a > b_previous )
         cond_not_found = !found
         cond = cond_incr && cond_total && cond_outer && cond_not_found
         if DEBUG
