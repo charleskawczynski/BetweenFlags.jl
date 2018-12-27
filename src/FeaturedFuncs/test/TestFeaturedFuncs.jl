@@ -1,6 +1,7 @@
 using Test
 include(joinpath(pwd(), "Includes.jl"))
-using BetweenFlags
+
+using FeaturedFuncs
 
 function main()
   path_separator = Sys.iswindows() ? "\\" : "/"
@@ -17,13 +18,13 @@ end
 
 function test_get_between_flags()
   s_i1 = "Some text... {GRAB THIS}, some more text {GRAB THIS TOO}..."
-  L_o1 = BetweenFlags.get_between_flags(s_i1, ["{"], ["}"])
+  L_o1 = FeaturedFuncs.get_between_flags(s_i1, ["{"], ["}"])
   s_i2 = "Some text... {GRAB THIS}, some more text {GRAB THIS TOO}..."
-  L_o2 = BetweenFlags.get_between_flags(s_i2, ["{"], ["}"], false)
+  L_o2 = FeaturedFuncs.get_between_flags(s_i2, ["{"], ["}"], false)
   s_i3 = "Some text... {GRAB THIS), } some more text {GRAB THIS TOO}..."
-  L_o3 = BetweenFlags.get_between_flags(s_i3, ["{"], ["}", ")"])
+  L_o3 = FeaturedFuncs.get_between_flags(s_i3, ["{"], ["}", ")"])
   s_i4 = "Some text... {GRAB THIS), } some more text {GRAB THIS TOO}..."
-  L_o4 = BetweenFlags.get_between_flags(s_i4, ["{"], ["}", ")"], false)
+  L_o4 = FeaturedFuncs.get_between_flags(s_i4, ["{"], ["}", ")"], false)
 
   @testset begin
       @test L_o1[1]=="{GRAB THIS}"
@@ -39,13 +40,13 @@ end
 
 function test_get_between_flags_level()
   s_i1 = "Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}..."
-  L_o1 = BetweenFlags.get_between_flags_level(s_i1, ["{"], ["}"])
+  L_o1 = FeaturedFuncs.get_between_flags_level(s_i1, ["{"], ["}"])
   s_i2 = "Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}..."
-  L_o2 = BetweenFlags.get_between_flags_level(s_i2, ["{"], ["}"], false)
+  L_o2 = FeaturedFuncs.get_between_flags_level(s_i2, ["{"], ["}"], false)
   s_i3 = "Some text... {GRAB {THIS}), } some more text {GRAB THIS TOO}..."
-  L_o3 = BetweenFlags.get_between_flags_level(s_i3, ["{"], ["}", ")"])
+  L_o3 = FeaturedFuncs.get_between_flags_level(s_i3, ["{"], ["}", ")"])
   s_i4 = "Some text... {GRAB {THIS}), } some more text {GRAB THIS TOO}..."
-  L_o4 = BetweenFlags.get_between_flags_level(s_i4, ["{"], ["}", ")"], false)
+  L_o4 = FeaturedFuncs.get_between_flags_level(s_i4, ["{"], ["}", ")"], false)
 
   @testset begin
       @test L_o1[1]=="{GRAB {THIS}}"
@@ -72,7 +73,7 @@ function test_get_between_flags_level_practical()
   s_i = string(s_i, "\n", "  more stuff")
   s_i = string(s_i, "\n", "end")
   s_i = string(s_i, "\n", "more text")
-  L_o = BetweenFlags.get_between_flags_level(s_i, ["function ", "if "], [" end", "\nend"])
+  L_o = FeaturedFuncs.get_between_flags_level(s_i, ["function ", "if "], [" end", "\nend"])
 
   s_o = ""
   s_o = string(s_o,       "function myfunc()")
@@ -130,7 +131,7 @@ function test_get_between_flags_level_practical_complex()
     Flag("end",      word_boundaries_left, word_boundaries_right)
   )]
 
-  L_o = BetweenFlags.get_between_flags_level_new_new(s_i, FS_outer, FS_inner)
+  L_o = FeaturedFuncs.get_between_flags_level_new_new(s_i, FS_outer, FS_inner)
 
   s_o = ""
   s_o = string(s_o,       " function myfunc()") # The extra space is due to the left word boundary of the function...
@@ -147,11 +148,6 @@ function test_get_between_flags_level_practical_complex()
   s_o = string(s_o, "\n", "    end")
   s_o = string(s_o, "\n", "    more stuff")
   s_o = string(s_o, "\n", "  end\n") # The \n is due to the right word boundary of the "end"
-  # print("\n =========================================== s_o \n")
-  # print(s_o)
-  # print("\n =========================================== L_o[1] \n")
-  # print(L_o[1])
-  # print("\n =========================================== \n")
 
   @testset begin
       @test L_o[1]==s_o
@@ -159,20 +155,20 @@ function test_get_between_flags_level_practical_complex()
 end
 
 function test_remove_between_flags()
-  s_i1 = "Here is some text, and {THIS SHOULD BE REMOVED}, BetweenFlags offers a simple interface..."
-  s_o1 = BetweenFlags.remove(s_i1, ["{"], ["}"])
-  s_i2 = "Here is some text, and {THIS SHOULD BE REMOVED}, BetweenFlags offers a simple interface..."
-  s_o2 = BetweenFlags.remove(s_i2, ["{"], ["}"], false)
-  s_i3 = "Here is some text, and {THIS SHOULD BE REMOVED), BetweenFlags} offers a simple interface..."
-  s_o3 = BetweenFlags.remove(s_i3, ["{"], ["}", ")"])
-  s_i4 = "Here is some text, and {THIS SHOULD BE REMOVED), BetweenFlags} offers a simple interface..."
-  s_o4 = BetweenFlags.remove(s_i3, ["{"], ["}", ")"], false)
+  s_i1 = "Here is some text, and {THIS SHOULD BE REMOVED}, FeaturedFuncs offers a simple interface..."
+  s_o1 = FeaturedFuncs.remove(s_i1, ["{"], ["}"])
+  s_i2 = "Here is some text, and {THIS SHOULD BE REMOVED}, FeaturedFuncs offers a simple interface..."
+  s_o2 = FeaturedFuncs.remove(s_i2, ["{"], ["}"], false)
+  s_i3 = "Here is some text, and {THIS SHOULD BE REMOVED), FeaturedFuncs} offers a simple interface..."
+  s_o3 = FeaturedFuncs.remove(s_i3, ["{"], ["}", ")"])
+  s_i4 = "Here is some text, and {THIS SHOULD BE REMOVED), FeaturedFuncs} offers a simple interface..."
+  s_o4 = FeaturedFuncs.remove(s_i3, ["{"], ["}", ")"], false)
 
   @testset begin
-      @test s_o1=="Here is some text, and , BetweenFlags offers a simple interface..."
-      @test s_o2=="Here is some text, and {}, BetweenFlags offers a simple interface..."
-      @test s_o3=="Here is some text, and , BetweenFlags} offers a simple interface..."
-      @test s_o4=="Here is some text, and {), BetweenFlags} offers a simple interface..."
+      @test s_o1=="Here is some text, and , FeaturedFuncs offers a simple interface..."
+      @test s_o2=="Here is some text, and {}, FeaturedFuncs offers a simple interface..."
+      @test s_o3=="Here is some text, and , FeaturedFuncs} offers a simple interface..."
+      @test s_o4=="Here is some text, and {), FeaturedFuncs} offers a simple interface..."
   end
 end
 

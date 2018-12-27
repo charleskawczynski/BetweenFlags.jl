@@ -1,6 +1,7 @@
 using Test
-push!(LOAD_PATH, "./")
-using MakeIncludes
+push!(LOAD_PATH, "../src")
+using GetIncludes
+using BetweenFlags
 
 function is_test_folder(f, path_separator)
   a = split(f, path_separator)
@@ -13,9 +14,7 @@ function main()
   path_separator = Sys.iswindows() ? "\\" : "/"
 
   up = ".."*path_separator
-  root_dir = @__DIR__
-  root_dir = root_dir*path_separator*up
-  code_dir = root_dir*"src"*path_separator
+  code_dir = up*"src"*path_separator
 
   this_file = @__FILE__
   this_file = replace(this_file, "/" => path_separator)
@@ -23,7 +22,7 @@ function main()
   this_file = split(this_file, path_separator)[end-1:end]
   this_file = code_dir*joinpath(this_file...)
 
-  folders_to_exclude = []
+  folders_to_exclude = Vector{String}()
   all_files = [joinpath([root,f]...) for (root, dirs, files) in Base.Filesystem.walkdir(code_dir) for f in files]
   all_files = [x for x in all_files if ! any([occursin(y, x) for y in folders_to_exclude])]
   all_files = [replace(x, "/" => path_separator) for x in all_files]
@@ -33,8 +32,13 @@ function main()
   all_files = [x for x in all_files if split(x, ".")[end]=="jl"] # only .jl files
 
   # Generate include file for tests:
-  MakeIncludes.make()
-  include("Includes.jl")
+  print_files = false
+  all_folders = GetIncludes.get_includes(code_dir, folders_to_exclude, print_files)
+  open("Includes.jl", "w") do file
+    for f in all_folders
+      write(file, "push!(LOAD_PATH, \"", f,"\")\n")
+    end
+  end
 
   # Code coverage command line options; must correspond to src/julia.h
   # and src/ui/repl.c

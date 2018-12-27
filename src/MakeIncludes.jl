@@ -20,11 +20,11 @@ function make()
     all_folders = [replace(x, path_separator => "/") for x in all_folders] # \ escapes characters in Julia
   end
 
-  # print("\n******************** folders to include:\n")
-  # for x in all_folders
-  #   print(x, "\n")
-  # end
-  # print("********************\n")
+  print("\n******************** folders to include:\n")
+  for x in all_folders
+    print(x, "\n")
+  end
+  print("********************\n")
 
   open("Includes.jl", "w") do file
     for f in all_folders
