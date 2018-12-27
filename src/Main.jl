@@ -3,7 +3,7 @@ using BetweenFlags
 
 function simple_example()
   s_i = "Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}..."
-  L_o = FeaturedFuncs.get_between_flags_level(s_i, ["{"], ["}"])
+  L_o = get_between_flags_level_flat(s_i, ["{"], ["}"])
   print("\n -------------- results from simple example: \n")
   print(L_o[1])
   print("\n --------------\n")
@@ -49,7 +49,7 @@ function complex_example()
     Flag("end",      word_boundaries_left, word_boundaries_right)
   )]
 
-  L_o = FeaturedFuncs.get_between_flags_level_new_new(s_i, FS_outer, FS_inner)
+  L_o = get_between_flags_level(s_i, FS_outer, FS_inner)
   print("\n -------------- results from complex example: \n")
   print(L_o[1])
   print("\n --------------\n")

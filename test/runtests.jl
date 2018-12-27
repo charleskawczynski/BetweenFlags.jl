@@ -1,7 +1,6 @@
 using Test
 push!(LOAD_PATH, "../src")
 using GetIncludes
-using BetweenFlags
 
 function is_test_folder(f, path_separator)
   a = split(f, path_separator)

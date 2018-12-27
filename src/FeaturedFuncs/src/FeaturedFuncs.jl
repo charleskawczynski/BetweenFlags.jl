@@ -6,6 +6,10 @@ using PerFlagFuncs
 
 export Flag
 export FlagSet
+export get_between_flags_flat
+export get_between_flags_level
+export get_between_flags_level_flat
+export remove_between_flags_flat
 
 svec = Vector{String}
 
@@ -156,7 +160,7 @@ function get_remaining_flags(s::String, flags_start::svec, flags_stop::svec)::Bo
   return remaining_flags
 end
 
-function get_between_flags(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true)
+function get_between_flags_flat(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true)
   L = Vector{String}()
   L_start = [m for flag_start in flags_start for m in find_next_iter(s, flag_start)]
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
@@ -173,7 +177,7 @@ function get_between_flags(s::String, flags_start::svec, flags_stop::svec, inclu
   return L
 end
 
-function get_between_flags_level(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true)
+function get_between_flags_level_flat(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true)
   L = Vector{String}()
   L_start = [m for flag_start in flags_start for m in find_next_iter(s, flag_start)]
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
@@ -193,35 +197,7 @@ function get_between_flags_level(s::String, flags_start::svec, flags_stop::svec,
   return L
 end
 
-function get_between_flags_level_new(s::String, outer_flags::FlagSet, inner_flags::Vector{FlagSet}, inclusive::Bool = true)
-  L = Vector{String}()
-  outer_flags_start = outer_flags.start.trigger
-  outer_flags_stop = outer_flags.stop.trigger
-  inner_flags_start = [y for x in inner_flags for y in x.start.trigger]
-  inner_flags_stop  = [y for x in inner_flags for y in x.stop.trigger]
-
-  flags_start = vcat(outer_flags_start, inner_flags_start)
-  flags_stop  = vcat(outer_flags_stop , inner_flags_stop)
-  L_start = [m for flag_start in flags_start for m in find_next_iter(s, flag_start)]
-  L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
-  L_start = unique(L_start)
-  L_stop = unique(L_stop)
-  sort!(L_start)
-  sort!(L_stop)
-  if L_start==[] || L_stop==[]
-    return L
-  end
-  level = compute_level_total(s, flags_start, flags_stop)
-  level_outer = compute_level_total(s, outer_flags_start, outer_flags_stop)
-  (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop, level, level_outer, s)
-  for (i_start, i_stop) in zip(L_start, L_stop)
-    b, m, a = substring_decomp_by_index(s, i_start, i_stop, flags_start, flags_stop, inclusive)
-    push!(L, m)
-  end
-  return L
-end
-
-function get_between_flags_level_new_new(s::String, outer_flags::FlagSet, inner_flags::Vector{FlagSet}, inclusive::Bool = true)
+function get_between_flags_level(s::String, outer_flags::FlagSet, inner_flags::Vector{FlagSet}, inclusive::Bool = true)
   L = Vector{String}()
   flag_set_all = vcat([outer_flags], inner_flags)
   outer_flags_start = outer_flags.start.trigger
@@ -251,7 +227,7 @@ function get_between_flags_level_new_new(s::String, outer_flags::FlagSet, inner_
   return L
 end
 
-function remove(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true, reverse_order::Bool = false)
+function remove_between_flags_flat(s::String, flags_start::svec, flags_stop::svec, inclusive::Bool = true, reverse_order::Bool = false)
   """ remove_between_flags (RBF) is fundamentally different from get_between_flags (GBF) because
         the string, s, in GBF does not change, whereas it does in RBG. Therefore, the indexes found
         must, either be translated by the number of removed characters in the correct location, or
