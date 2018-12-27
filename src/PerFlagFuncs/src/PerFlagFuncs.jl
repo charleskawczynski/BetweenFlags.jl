@@ -1,19 +1,45 @@
 module PerFlagFuncs
 # using Plots
 
+export split_by_consecutives
 export count_flags
 export find_next_iter
 export merge_even_odd
 export get_alternating_consecutive_vector
 
-function count_flags(s::String, needle::String)
+function split_by_consecutives(A::Vector{Int})
+  N = length(A)
+  if N>1
+    sig = vcat(diff(A), [1])
+    N_groups = count(map(x->x==1, sig))+1
+    A_sub = Vector{Int}()
+    A_split = Vector{Vector{Int}}([])
+    k=1
+    for (a, s) in zip(A, sig)
+      push!(A_sub, a)
+      if !(s==1)
+        push!(A_split, A_sub)
+        A_sub = Vector{Int}([])
+        k+=1
+      end
+      if a==A[N] && !(s==1)==false
+        push!(A_split, A_sub)
+      end
+    end
+    return A_split
+  else
+    return [A]
+  end
+end
+
+function count_flags(s::String, flag::String)
   cnt = 0
-  LN = length(needle)
+  LN = length(flag)
   LS = length(s)
   if LN <= LS
     for i in 1:LS-LN+1
       substr = s[i:i+LN-1]
-      if needle==substr
+      if flag==substr
         cnt += 1
       end
     end
@@ -21,14 +47,14 @@ function count_flags(s::String, needle::String)
   return cnt
 end
 
-function find_next_iter(s::String, pattern::String)
+function find_next_iter(s::String, flag::String)
   ind = []
-  LN = length(pattern)
+  LN = length(flag)
   LS = length(s)
   if LN <= LS
     for i in 1:LS-LN+1
       substr = s[i:i+LN-1]
-      if pattern==substr
+      if flag==substr
         push!(ind, i)
       end
     end
@@ -40,15 +66,19 @@ function merge_even_odd(odd::Vector{Int64}, even::Vector{Int64})
   return [odd even]'[:]
 end
 
-function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, level=nothing, level_outer=nothing, s=nothing)
+function get_region(v, i)
+  return string(v[i-1],",",v[i],",",v[i+1])
+end
+
+function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, level_total=nothing, level_outer=nothing, s=nothing)
   DEBUG = false
   N_AB = max(A..., B...)
   s_given = !(s == nothing)
-  level_given = !(level == nothing)
+  level_given = !(level_total == nothing)
   level_outer_given = !(level_outer == nothing)
 
   if s_given
-    DEBUG = true
+    DEBUG = false
     N_s = length(s)
     N_AB = N_s
   else
@@ -56,24 +86,11 @@ function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, 
     s = repeat('*', N_s)
   end
   if !level_given
-    level = zeros(N_s)
+    level_total = zeros(N_s)
   end
   if !level_outer_given
     level_outer = zeros(N_s)
   end
-  # if level_outer_given && level_given
-  #   print("\n")
-  #   print("\nN_s                 = ", N_s)
-  #   print("\nlength(level)       = ", length(level))
-  #   print("\nlength(level_outer) = ", length(level_outer))
-  #   print("\n")
-  #   plot([Float64(x) for x in 1:N_s][23:27], level[23:27])
-  #   plot!(title = "level", xlabel = "character", ylabel = "level")
-  #   png("level")
-  #   plot([Float64(x) for x in 1:N_s][23:27], level_outer[23:27])
-  #   plot!(title = "level_outer", xlabel = "character", ylabel = "level_outer")
-  #   png("level_outer")
-  # end
 
   L = Vector{Int64}(undef, 0)
   e = Vector{Int64}(undef, 0)
@@ -81,33 +98,39 @@ function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, 
   B_available = B
   if DEBUG
     print("\n ************************************************* Debugging get_alternating_consecutive_vector \n")
+    print("A = ",A)
+    print("\nB = ",B,"\n")
   end
   if length(A) > 0 && length(B) > 0
     b_previous = B[1]
     j_previous = 1
     for (i, a) in enumerate(A)
-      a_minus_one = max(a-1, 1)
       found = false
+      if DEBUG
+        print("\n ----------------------------------- new B_available\n")
+      end
       for (j, b) in enumerate(B_available)
-        b_plus_one = min(b+1, N_s)
-        cond_outer_start = level_outer[a_minus_one]+1==level_outer[a]
-        # cond_outer_stop  = level_outer[b_plus_one]+1==level_outer[b]
-        # cond_outer_start = true
-        # cond_outer_stop  = true
-        if s_given
-          cond_outer = cond_outer_start && cond_outer_stop || (i==1 || j==1)
-        else
-          cond_outer = true
-        end
-        cond = ( b > a && a > b_previous ) || ( b > a && a == A[1] ) && !found && level[a]==level[b] && cond_outer
+        # cond_outer = level_outer_given ? level_outer[a]==level_outer[b] : true
+        # cond_outer = level_outer_given ? level_outer[a]==1 && level_outer[b]==1 : true
+        cond_outer = level_outer_given ? level_outer[a]==1 && level_outer[a-1]==0 && level_outer[b]==1 && level_outer[b+1]==0 : true
+        cond_total = level_total[a]==level_total[b]
+        # cond_incr = ( b > a && a > b_previous ) || ( b > a && a == A[1] )
+        # cond_incr = (b > a) && ( a > b_previous || a == A[1] )
+        cond_i1 = (b > a)
+        cond_i2 = ( true || a == A[1] )
+        cond_incr = cond_i1 && cond_i2
+        # cond_incr = ( b > a && a > b_previous )
+        cond_not_found = !found
+        cond = cond_incr && cond_total && cond_outer && cond_not_found
         if DEBUG
           print("\n")
           print("a=", a)
           print(",b=", b)
-          print(",s[",a, ",", b,"]=", s[a], s[b])
-          print(",level[",a,",",b,"]=", level[a], level[b])
-          print(",level_outer[",a,",",b,"]=", level_outer[a], level_outer[b])
-          print(",cond=", cond)
+          print(",cond_i1=", cond_i1)
+          print(",cond_i2=", cond_i2)
+          print(",lev_tot[",a,",",b,"]=", get_region(level_total, a),",", get_region(level_total, b))
+          print(",lev_out[",a,",",b,"]=", get_region(level_outer, a),",", get_region(level_outer, b))
+          print(",c(i, f, t, o)=", cond_incr, ", ", cond_not_found, ", ", cond_total, ", ", cond_outer)
         end
         if cond
           push!(L, a)

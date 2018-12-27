@@ -17,13 +17,13 @@ end
 
 function test_get_between_flags()
   s_i1 = "Some text... {GRAB THIS}, some more text {GRAB THIS TOO}..."
-  L_o1 = BetweenFlags.get(s_i1, ["{"], ["}"])
+  L_o1 = BetweenFlags.get_between_flags(s_i1, ["{"], ["}"])
   s_i2 = "Some text... {GRAB THIS}, some more text {GRAB THIS TOO}..."
-  L_o2 = BetweenFlags.get(s_i2, ["{"], ["}"], false)
+  L_o2 = BetweenFlags.get_between_flags(s_i2, ["{"], ["}"], false)
   s_i3 = "Some text... {GRAB THIS), } some more text {GRAB THIS TOO}..."
-  L_o3 = BetweenFlags.get(s_i3, ["{"], ["}", ")"])
+  L_o3 = BetweenFlags.get_between_flags(s_i3, ["{"], ["}", ")"])
   s_i4 = "Some text... {GRAB THIS), } some more text {GRAB THIS TOO}..."
-  L_o4 = BetweenFlags.get(s_i4, ["{"], ["}", ")"], false)
+  L_o4 = BetweenFlags.get_between_flags(s_i4, ["{"], ["}", ")"], false)
 
   @testset begin
       @test L_o1[1]=="{GRAB THIS}"
@@ -39,13 +39,13 @@ end
 
 function test_get_between_flags_level()
   s_i1 = "Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}..."
-  L_o1 = BetweenFlags.get_level(s_i1, ["{"], ["}"])
+  L_o1 = BetweenFlags.get_between_flags_level(s_i1, ["{"], ["}"])
   s_i2 = "Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}..."
-  L_o2 = BetweenFlags.get_level(s_i2, ["{"], ["}"], false)
+  L_o2 = BetweenFlags.get_between_flags_level(s_i2, ["{"], ["}"], false)
   s_i3 = "Some text... {GRAB {THIS}), } some more text {GRAB THIS TOO}..."
-  L_o3 = BetweenFlags.get_level(s_i3, ["{"], ["}", ")"])
+  L_o3 = BetweenFlags.get_between_flags_level(s_i3, ["{"], ["}", ")"])
   s_i4 = "Some text... {GRAB {THIS}), } some more text {GRAB THIS TOO}..."
-  L_o4 = BetweenFlags.get_level(s_i4, ["{"], ["}", ")"], false)
+  L_o4 = BetweenFlags.get_between_flags_level(s_i4, ["{"], ["}", ")"], false)
 
   @testset begin
       @test L_o1[1]=="{GRAB {THIS}}"
@@ -72,7 +72,7 @@ function test_get_between_flags_level_practical()
   s_i = string(s_i, "\n", "  more stuff")
   s_i = string(s_i, "\n", "end")
   s_i = string(s_i, "\n", "more text")
-  L_o = BetweenFlags.get_level(s_i, ["function ", "if "], [" end", "\nend"])
+  L_o = BetweenFlags.get_between_flags_level(s_i, ["function ", "if "], [" end", "\nend"])
 
   s_o = ""
   s_o = string(s_o,       "function myfunc()")
@@ -130,10 +130,10 @@ function test_get_between_flags_level_practical_complex()
     Flag("end",      word_boundaries_left, word_boundaries_right)
   )]
 
-  L_o = BetweenFlags.get_level_new(s_i, FS_outer, FS_inner)
+  L_o = BetweenFlags.get_between_flags_level_new_new(s_i, FS_outer, FS_inner)
 
   s_o = ""
-  s_o = string(s_o,       "function myfunc()")
+  s_o = string(s_o,       " function myfunc()") # The extra space is due to the left word boundary of the function...
   s_o = string(s_o, "\n", "    more stuff")
   s_o = string(s_o, "\n", "    if something")
   s_o = string(s_o, "\n", "      print('something')")
@@ -146,12 +146,12 @@ function test_get_between_flags_level_practical_complex()
   s_o = string(s_o, "\n", "      print('not something')")
   s_o = string(s_o, "\n", "    end")
   s_o = string(s_o, "\n", "    more stuff")
-  s_o = string(s_o, "\n", "  end")
-  print("\n =========================================== s_o \n")
-  print(s_o)
-  print("\n =========================================== L_o[1] \n")
-  print(L_o[1])
-  print("\n =========================================== \n")
+  s_o = string(s_o, "\n", "  end\n") # The \n is due to the right word boundary of the "end"
+  # print("\n =========================================== s_o \n")
+  # print(s_o)
+  # print("\n =========================================== L_o[1] \n")
+  # print(L_o[1])
+  # print("\n =========================================== \n")
 
   @testset begin
       @test L_o[1]==s_o
