@@ -39,8 +39,7 @@ function main()
     end
   end
 
-  # Code coverage command line options; must correspond to src/julia.h
-  # and src/ui/repl.c
+  # Code coverage command line options
   JL_LOG_NONE = 0
   JL_LOG_USER = 1
   JL_LOG_ALL = 2
