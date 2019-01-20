@@ -4,14 +4,15 @@ push!(LOAD_PATH,"../src/")
 
 using Documenter
 using BetweenFlags
-using FeaturedFuncs
-using PerFlagFuncs
-using UtilityFuncs
+# using FeaturedFuncs
+# using PerFlagFuncs
+# using UtilityFuncs
 
 makedocs(
   sitename = "BetweenFlags",
   format = :html,
-  modules = [BetweenFlags, FeaturedFuncs, PerFlagFuncs, UtilityFuncs],
+  modules = [BetweenFlags],
+  # modules = [BetweenFlags, FeaturedFuncs, PerFlagFuncs, UtilityFuncs],
   pages = Any[
   "Home" => "index.md",
   "Functions" => [
