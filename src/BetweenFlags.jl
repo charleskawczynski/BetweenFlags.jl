@@ -1,7 +1,8 @@
 module BetweenFlags
 
-push!(LOAD_PATH, "./FeaturedFuncs/src/")
-push!(LOAD_PATH, "./PerFlagFuncs/src/")
+root_dir = string(@__DIR__)
+push!(LOAD_PATH, root_dir*"./FeaturedFuncs/src/")
+push!(LOAD_PATH, root_dir*"./PerFlagFuncs/src/")
 export Flag
 export FlagSet
 export get_between_flags_flat
