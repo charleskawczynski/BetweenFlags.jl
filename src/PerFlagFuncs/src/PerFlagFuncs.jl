@@ -70,14 +70,12 @@ function get_region(v, i)
 end
 
 function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, level_total=nothing, level_outer=nothing, s=nothing)
-  DEBUG = false
   N_AB = max(A..., B...)
   s_given = !(s == nothing)
   level_given = !(level_total == nothing)
   level_outer_given = !(level_outer == nothing)
 
   if s_given
-    DEBUG = false
     N_s = length(s)
     N_AB = N_s
   else
@@ -95,19 +93,11 @@ function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, 
   e = Vector{Int64}(undef, 0)
   (C, D) = Tuple([e, e])
   B_available = B
-  if DEBUG
-    print("\n ************************************************* Debugging get_alternating_consecutive_vector \n")
-    print("A = ",A)
-    print("\nB = ",B,"\n")
-  end
   if length(A) > 0 && length(B) > 0
     b_previous = B[1]
     j_previous = 1
     for (i, a) in enumerate(A)
       found = false
-      if DEBUG
-        print("\n ----------------------------------- new B_available\n")
-      end
       for (j, b) in enumerate(B_available)
         cond_outer = level_outer_given ? level_outer[a]==1 && level_outer[a-1]==0 && level_outer[b]==1 && level_outer[b+1]==0 : true
         cond_total = level_total[a]==level_total[b]
@@ -116,16 +106,6 @@ function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, 
         cond_incr = cond_i1 && cond_i2
         cond_not_found = !found
         cond = cond_incr && cond_total && cond_outer && cond_not_found
-        if DEBUG
-          print("\n")
-          print("a=", a)
-          print(",b=", b)
-          print(",cond_i1=", cond_i1)
-          print(",cond_i2=", cond_i2)
-          print(",lev_tot[",a,",",b,"]=", get_region(level_total, a),",", get_region(level_total, b))
-          print(",lev_out[",a,",",b,"]=", get_region(level_outer, a),",", get_region(level_outer, b))
-          print(",c(i, f, t, o)=", cond_incr, ", ", cond_not_found, ", ", cond_total, ", ", cond_outer)
-        end
         if cond
           push!(L, a)
           push!(L, b)
@@ -138,9 +118,6 @@ function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, 
     end
     C = L[1:2:end]
     D = L[2:2:end]
-  end
-  if DEBUG
-    print("\n ************************************************* \n")
   end
   return Tuple([C, D])
 end

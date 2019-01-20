@@ -1,9 +1,4 @@
 module UtilityFuncs
-DEBUG = false
-
-if DEBUG
-  using Plots
-end
 
 root_dir = string(@__DIR__)
 push!(LOAD_PATH, root_dir*"../../PerFlagFuncs/src/")
@@ -100,11 +95,6 @@ function compute_level_per_flag(s::String, level_total::Vector{Int}, flag_set_al
     L_max = max(level_total_modified...)
     i_maxes = [i for (i, x) in enumerate(level_total_modified) if x==L_max]
     L_maxes = split_by_consecutives(i_maxes)
-    if DEBUG
-      plot([Float64(x) for x in 1:N], level_total)
-      plot!(title = "level", xlabel = "character", ylabel = "level")
-      png("level_total_iter_"*string(i))
-    end
     for i_max in L_maxes
       for FS in flag_set_all
         cond_any = any([x==s[i_max[1]:i_max[1]+length(x)-1] for x in FS.start.trigger])
@@ -115,32 +105,9 @@ function compute_level_per_flag(s::String, level_total::Vector{Int}, flag_set_al
       level_total_modified[i_max].-= 1
     end
   end
-  if DEBUG
-    for FS in flag_set_all
-      plot([Float64(x) for x in 1:N], D[FS.ID])
-      plot!(title = "level_"*FS.ID, xlabel = "ith index", ylabel = "level")
-      png("level_"*FS.ID)
-    end
-  end
   temp = [D[FS.ID] for FS in flag_set_all]
   level_total_check = sum(temp, dims=1)[1]
   err = [abs(x-y) for (x, y) in zip(level_total_check, level_total)]
-  if DEBUG
-    print("\nlength(level_total) = ", length(level_total))
-    print("\nlength(level_total_check) = ", length(level_total_check))
-    plot([Float64(x) for x in 1:N], level_total)
-    plot!(title = "level_total", xlabel = "ith index", ylabel = "level")
-    png("level_total")
-
-    plot([Float64(x) for x in 1:N], level_total_check)
-    plot!(title = "level_total_check", xlabel = "ith index", ylabel = "level")
-    png("level_total_check")
-
-    plot([Float64(x) for x in 1:N], err)
-    plot!(title = "err", xlabel = "ith index", ylabel = "level")
-    png("level_err")
-    print("\nerr = ", err)
-  end
   if !all([x<0.01 for x in err])
     error("Error: levels not conservative.")
   end
