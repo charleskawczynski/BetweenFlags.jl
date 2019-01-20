@@ -1,15 +1,31 @@
+Base.HOME_PROJECT[] = abspath(Base.HOME_PROJECT[]) # JuliaLang/julia/pull/28625
+push!(LOAD_PATH,"../")
+push!(LOAD_PATH,"../src/")
+
 using Documenter
+
 using BetweenFlags
+using FeaturedFuncs
+using PerFlagFuncs
+using UtilityFuncs
 
 makedocs(
-    sitename = "BetweenFlags",
-    format = :html,
-    modules = [BetweenFlags]
+  sitename = "BetweenFlags",
+  format = :html,
+  modules = [BetweenFlags, FeaturedFuncs, PerFlagFuncs, UtilityFuncs],
+  pages = Any[
+  "Home" => "index.md",
+  "Functions" => [
+               "Functions/Greedy.md",
+               "Functions/LevelBased.md",
+              ],
+  ]
+    ],
+  Documenter.HTML(
+    prettyurls = get(ENV, "CI", nothing) == "true"
+  )
 )
 
-# Documenter can also automatically deploy documentation to gh-pages.
-# See "Hosting Documentation" and deploydocs() in the Documenter manual
-# for more information.
-#=deploydocs(
-    repo = "<repository url>"
-)=#
+deploydocs(
+           repo = "github.com/charleskawczynski/BetweenFlags.jl.git",
+          )
