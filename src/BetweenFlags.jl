@@ -1,5 +1,7 @@
 module BetweenFlags
 
+push!(LOAD_PATH, "./FeaturedFuncs/src/")
+push!(LOAD_PATH, "./PerFlagFuncs/src/")
 export Flag
 export FlagSet
 export get_between_flags_flat
