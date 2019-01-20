@@ -1,5 +1,4 @@
 module PerFlagFuncs
-# using Plots
 
 export split_by_consecutives
 export count_flags

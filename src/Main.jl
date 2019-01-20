@@ -1,4 +1,5 @@
 push!(LOAD_PATH, "./")
+push!(LOAD_PATH, "../")
 using BetweenFlags
 
 function simple_example()

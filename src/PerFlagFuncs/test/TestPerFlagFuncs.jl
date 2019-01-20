@@ -13,7 +13,7 @@ end
 function test_merge_odd_even()
   a = [1, 3, 5]
   b = [2, 4, 6]
-  c = PerFlagFuncs.merge_even_odd(a, b)
+  c = merge_even_odd(a, b)
   @testset begin
       @test all([x==y for (x, y) in zip(c, [1, 2, 3, 4, 5, 6])])
   end
@@ -56,13 +56,13 @@ function test_get_alternating_consecutive_vector()
     print("B = ", B,"\n")
     print("\n------------------------- Modified\n")
   end
-  (C, D) = PerFlagFuncs.get_alternating_consecutive_vector(A, B)
+  (C, D) = get_alternating_consecutive_vector(A, B)
   if print_IO
     print("C = ", C,"\n")
     print("D = ", D,"\n")
     print("\n------------------------- Merged\n")
   end
-  M = PerFlagFuncs.merge_even_odd(C, D)
+  M = merge_even_odd(C, D)
   if print_IO
     print(M, "\n")
     print("\n ********************************************************** \n")
