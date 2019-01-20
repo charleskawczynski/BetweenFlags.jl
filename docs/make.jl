@@ -3,7 +3,6 @@ push!(LOAD_PATH,"../")
 push!(LOAD_PATH,"../src/")
 
 using Documenter
-
 using BetweenFlags
 using FeaturedFuncs
 using PerFlagFuncs
