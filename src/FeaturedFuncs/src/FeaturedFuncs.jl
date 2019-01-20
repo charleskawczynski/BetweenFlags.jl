@@ -1,8 +1,9 @@
 module FeaturedFuncs
 
-push!(LOAD_PATH, "../PerFlagFuncs/src/")
+root_dir = string(@__DIR__)
+push!(LOAD_PATH, root_dir*"../../PerFlagFuncs/src/")
 using PerFlagFuncs
-push!(LOAD_PATH, string(@__DIR__))
+push!(LOAD_PATH, root_dir)
 using UtilityFuncs
 
 export Flag

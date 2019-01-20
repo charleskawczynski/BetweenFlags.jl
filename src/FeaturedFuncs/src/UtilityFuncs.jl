@@ -5,7 +5,8 @@ if DEBUG
   using Plots
 end
 
-push!(LOAD_PATH, "../PerFlagFuncs/src/")
+root_dir = string(@__DIR__)
+push!(LOAD_PATH, root_dir*"../../PerFlagFuncs/src/")
 using PerFlagFuncs
 
 export svec
