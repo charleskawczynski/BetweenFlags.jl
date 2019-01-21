@@ -2,6 +2,7 @@
 
 root_dir = string(@__DIR__)
 push!(LOAD_PATH, root_dir*"../src/")
+push!(LOAD_PATH, root_dir*"../")
 
 using Documenter
 using BetweenFlags
