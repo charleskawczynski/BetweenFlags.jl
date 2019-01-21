@@ -49,6 +49,12 @@ git-tree-sha1 = "f5803a9c2c23ff226e8eab2df7ac4c75e77a0d53"
 uuid = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
 version = "0.1.0"
 
+[[FeaturedFuncs]]
+deps = ["PerFlagFuncs", "UtilityFuncs"]
+path = "src/FeaturedFuncs"
+uuid = "54e089ee-1ce9-11e9-2fef-ad450841718f"
+version = "0.1.0"
+
 [[HTTP]]
 deps = ["Base64", "Dates", "Distributed", "IniFile", "MbedTLS", "Sockets", "Test"]
 git-tree-sha1 = "b881f69331e85642be315c63d05ed65d6fc8a05b"
@@ -103,6 +109,12 @@ version = "0.6.6"
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
+[[PerFlagFuncs]]
+deps = ["Test"]
+path = "src/PerFlagFuncs"
+uuid = "7b10d850-1ce9-11e9-19f9-75beb9a07831"
+version = "0.1.0"
+
 [[Pkg]]
 deps = ["Dates", "LibGit2", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
@@ -150,3 +162,9 @@ uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [[Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+
+[[UtilityFuncs]]
+deps = ["PerFlagFuncs", "Test"]
+path = "src/UtilityFuncs"
+uuid = "c9219610-1ce9-11e9-3574-cd9e5668c7a1"
+version = "0.1.0"

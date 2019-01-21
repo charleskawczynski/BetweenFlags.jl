@@ -1,0 +1,7 @@
+name = "PerFlagFuncs"
+uuid = "7b10d850-1ce9-11e9-19f9-75beb9a07831"
+authors = ["Charles_Kawczynski <kawczynski.charles@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
