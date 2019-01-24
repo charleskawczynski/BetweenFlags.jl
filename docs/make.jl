@@ -1,14 +1,9 @@
 # Base.HOME_PROJECT[] = abspath(Base.HOME_PROJECT[]) # JuliaLang/julia/pull/28625
-
-root_dir = string(@__DIR__)
-push!(LOAD_PATH, root_dir*"../src/")
-push!(LOAD_PATH, root_dir*"../")
+push!(LOAD_PATH,"../src/")
+push!(LOAD_PATH,"../")
 
 using Documenter
 using BetweenFlags
-# using FeaturedFuncs
-# using PerFlagFuncs
-# using UtilityFuncs
 
 makedocs(
   sitename = "BetweenFlags",
@@ -21,8 +16,7 @@ makedocs(
                "Functions/Greedy.md",
                "Functions/LevelBased.md",
               ],
-  ]
-    ],
+  ],
   Documenter.HTML(
     prettyurls = get(ENV, "CI", nothing) == "true"
   )
