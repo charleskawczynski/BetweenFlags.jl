@@ -25,7 +25,7 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
 [[PerFlagFuncs]]
 deps = ["Test"]
-path = "../PerFlagFuncs"
+path = "..\\PerFlagFuncs"
 uuid = "7b10d850-1ce9-11e9-19f9-75beb9a07831"
 version = "0.1.0"
 
@@ -45,6 +45,6 @@ uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[UtilityFuncs]]
 deps = ["PerFlagFuncs", "Test"]
-path = "../UtilityFuncs"
+path = "..\\UtilityFuncs"
 uuid = "c9219610-1ce9-11e9-3574-cd9e5668c7a1"
 version = "0.1.0"

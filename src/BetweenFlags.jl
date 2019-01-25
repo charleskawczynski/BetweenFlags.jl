@@ -1,8 +1,8 @@
 module BetweenFlags
 
-using FeaturedFuncs
 using PerFlagFuncs
 using UtilityFuncs
+using FeaturedFuncs
 
 export Flag
 export FlagSet

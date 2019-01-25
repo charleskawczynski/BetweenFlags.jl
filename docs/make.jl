@@ -1,15 +1,14 @@
-# Base.HOME_PROJECT[] = abspath(Base.HOME_PROJECT[]) # JuliaLang/julia/pull/28625
-push!(LOAD_PATH,"../src/")
-push!(LOAD_PATH,"../")
+Base.HOME_PROJECT[] = abspath(Base.HOME_PROJECT[]) # JuliaLang/julia/pull/28625
 
 using Documenter
 using BetweenFlags
 
 makedocs(
   sitename = "BetweenFlags",
-  format = :html,
+  doctest = false,
+  strict = false,
+  format = Documenter.HTML(),
   modules = [BetweenFlags],
-  # modules = [BetweenFlags, FeaturedFuncs, PerFlagFuncs, UtilityFuncs],
   pages = Any[
   "Home" => "index.md",
   "Functions" => [
