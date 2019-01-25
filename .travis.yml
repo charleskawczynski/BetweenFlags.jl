@@ -27,6 +27,18 @@ after_success:
   # push coverage results to Codecov
   - julia -e 'import Pkg; cd(Pkg.dir("BetweenFlags")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
 
+# jobs:
+#   include:
+#     - stage: "Documentation"
+#       julia: 1.0
+#       os: linux
+#       script:
+#         - export DOCUMENTER_DEBUG="true"
+#         - julia --color=yes --project=docs/ -e 'using Pkg; Pkg.instantiate()'
+#         - julia --color=yes --project=docs/ docs/make.jl
+#         -julia -e 'using Pkg; cd(Pkg.dir("BetweenFlags")); Pkg.add("Documenter"); Pkg.add("SpecialFunctions"); include(joinpath("docs", "make.jl"))'
+#       after_success: skip
+
 jobs:
   include:
     - stage: "Documentation"
@@ -34,6 +46,8 @@ jobs:
       os: linux
       script:
         - export DOCUMENTER_DEBUG="true"
-        - julia --color=yes --project=docs/ -e 'using Pkg; Pkg.instantiate()'
+        - julia --color=yes --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));
+                                                           Pkg.build("BetweenFlags");
+                                                           Pkg.instantiate()'
         - julia --color=yes --project=docs/ docs/make.jl
       after_success: skip
