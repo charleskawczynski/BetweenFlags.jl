@@ -1,5 +1,6 @@
-Base.HOME_PROJECT[] = abspath(Base.HOME_PROJECT[]) # JuliaLang/julia/pull/28625
+# Base.HOME_PROJECT[] = abspath(Base.HOME_PROJECT[]) # JuliaLang/julia/pull/28625
 
+push!(LOAD_PATH, "../")
 using Documenter
 using BetweenFlags
 

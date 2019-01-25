@@ -2,5 +2,6 @@
 BetweenFlags = "0601b4d0-0592-11e9-1558-ab091b5e7996"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 FeaturedFuncs = "54e089ee-1ce9-11e9-2fef-ad450841718f"
+Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
 PerFlagFuncs = "7b10d850-1ce9-11e9-19f9-75beb9a07831"
 UtilityFuncs = "c9219610-1ce9-11e9-3574-cd9e5668c7a1"
