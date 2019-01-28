@@ -41,7 +41,7 @@ version = "0.1.0"
 
 [[FeaturedFuncs]]
 deps = ["PerFlagFuncs", "Test", "UtilityFuncs"]
-path = "src/FeaturedFuncs"
+path = "src\\FeaturedFuncs"
 uuid = "54e089ee-1ce9-11e9-2fef-ad450841718f"
 version = "0.1.0"
 
@@ -92,16 +92,16 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
 [[MbedTLS]]
 deps = ["BinaryProvider", "Dates", "Libdl", "Random", "Sockets", "Test"]
-git-tree-sha1 = "c93a87da4081a3de781f34e0540175795a2ce83d"
+git-tree-sha1 = "40b4a9149f0967714991328b8155c9ff5f91e755"
 uuid = "739be429-bea8-5141-9913-cc70e7f3736d"
-version = "0.6.6"
+version = "0.6.7"
 
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[PerFlagFuncs]]
 deps = ["Test"]
-path = "src/PerFlagFuncs"
+path = "src\\PerFlagFuncs"
 uuid = "7b10d850-1ce9-11e9-19f9-75beb9a07831"
 version = "0.1.0"
 
@@ -143,6 +143,6 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 
 [[UtilityFuncs]]
 deps = ["PerFlagFuncs", "Test"]
-path = "src/UtilityFuncs"
+path = "src\\UtilityFuncs"
 uuid = "c9219610-1ce9-11e9-3574-cd9e5668c7a1"
 version = "0.1.0"
