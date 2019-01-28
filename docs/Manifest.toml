@@ -57,7 +57,7 @@ version = "0.1.0"
 
 [[FeaturedFuncs]]
 deps = ["PerFlagFuncs", "Test", "UtilityFuncs"]
-path = "..\\src\\FeaturedFuncs"
+path = "../src/FeaturedFuncs"
 uuid = "54e089ee-1ce9-11e9-2fef-ad450841718f"
 version = "0.1.0"
 
@@ -117,7 +117,7 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[PerFlagFuncs]]
 deps = ["Test"]
-path = "..\\src\\PerFlagFuncs"
+path = "../src/PerFlagFuncs"
 uuid = "7b10d850-1ce9-11e9-19f9-75beb9a07831"
 version = "0.1.0"
 
@@ -171,6 +171,6 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 
 [[UtilityFuncs]]
 deps = ["PerFlagFuncs", "Test"]
-path = "..\\src\\UtilityFuncs"
+path = "../src/UtilityFuncs"
 uuid = "c9219610-1ce9-11e9-3574-cd9e5668c7a1"
 version = "0.1.0"
