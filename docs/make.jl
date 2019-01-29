@@ -12,7 +12,7 @@ makedocs(
   modules = [BetweenFlags],
   pages = Any[
   "Home" => "index.md",
-  "Functions" => [
+  "Functions" => Any[
                "Functions/Greedy.md",
                "Functions/LevelBased.md",
               ],

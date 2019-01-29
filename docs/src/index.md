@@ -1,7 +1,3 @@
 # BetweenFlags.jl
 
-Documentation for BetweenFlags.jl
-
-```@docs
-count_flags(s::String, needle::String)
-```
+For featured functions, visit the Greedy or LevelBased functions.

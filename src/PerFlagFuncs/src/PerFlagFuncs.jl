@@ -31,6 +31,11 @@ function split_by_consecutives(A::Vector{Int})
   end
 end
 
+"""
+count_flags(s::String, flag::String)
+
+counts the number of flags `flag` in string `s`.
+"""
 function count_flags(s::String, flag::String)
   cnt = 0
   LN = length(flag)
