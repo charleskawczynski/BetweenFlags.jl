@@ -1,5 +1,4 @@
 using Test
-include(joinpath(pwd(), "Includes.jl"))
 using PerFlagFuncs
 
 function main()
@@ -69,7 +68,4 @@ function test_get_alternating_consecutive_vector()
   end
 end
 
-
-if abspath(PROGRAM_FILE) == @__FILE__
-  main()
-end
+main()

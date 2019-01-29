@@ -1,5 +1,4 @@
 using Test
-include(joinpath(pwd(), "Includes.jl"))
 using FeaturedFuncs
 
 function main()
@@ -171,6 +170,4 @@ function test_remove_between_flags()
   end
 end
 
-if abspath(PROGRAM_FILE) == @__FILE__
-  main()
-end
+main()

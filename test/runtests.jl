@@ -1,6 +1,5 @@
 using Test
-push!(LOAD_PATH, "../src")
-using GetIncludes
+using BetweenFlags
 
 function is_test_folder(f, path_separator)
   a = split(f, path_separator)
@@ -29,15 +28,7 @@ function main()
   all_files = [x for x in all_files if is_test_folder(x, path_separator)]
   all_files = [x for x in all_files if !(x==this_file)]
   all_files = [x for x in all_files if split(x, ".")[end]=="jl"] # only .jl files
-
-  # Generate include file for tests:
-  print_files = false
-  all_folders = GetIncludes.get_includes(code_dir, folders_to_exclude, print_files)
-  open("Includes.jl", "w") do file
-    for f in all_folders
-      write(file, "push!(LOAD_PATH, \"", f,"\")\n")
-    end
-  end
+  all_files = [x for x in all_files if basename(x)=="runtests.jl"] # only .jl files
 
   # Code coverage command line options
   JL_LOG_NONE = 0
