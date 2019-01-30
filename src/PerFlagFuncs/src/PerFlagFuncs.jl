@@ -74,7 +74,11 @@ function get_region(v, i)
   return string(v[i-1],",",v[i],",",v[i+1])
 end
 
-function get_alternating_consecutive_vector(A::Vector{Int64}, B::Vector{Int64}, level_total=nothing, level_outer=nothing, s=nothing)
+function get_alternating_consecutive_vector(A::Vector{Int64},
+                                            B::Vector{Int64},
+                                            level_total=nothing,
+                                            level_outer=nothing,
+                                            s=nothing)
   N_AB = max(A..., B...)
   s_given = !(s == nothing)
   level_given = !(level_total == nothing)
