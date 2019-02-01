@@ -5,11 +5,16 @@ using Documenter
 using BetweenFlags
 
 makedocs(
-  sitename = "BetweenFlags",
+  sitename = "BetweenFlags.jl",
   doctest = false,
   strict = false,
-  format = Documenter.HTML(),
-  modules = [BetweenFlags],
+  format = Documenter.HTML(
+    prettyurls = get(ENV, "CI", nothing) == "true",
+    # prettyurls = !("local" in ARGS),
+    canonical = "https://charleskawczynski.github.io/BetweenFlags.jl/stable/",
+  ),
+  clean = false,
+  modules = [Documenter, BetweenFlags],
   pages = Any[
   "Home" => "index.md",
   "Functions" => Any[
@@ -17,11 +22,9 @@ makedocs(
                "Functions/LevelBased.md",
               ],
   ],
-  Documenter.HTML(
-    prettyurls = get(ENV, "CI", nothing) == "true"
-  )
 )
 
 deploydocs(
            repo = "github.com/charleskawczynski/BetweenFlags.jl.git",
+           target = "build",
           )
