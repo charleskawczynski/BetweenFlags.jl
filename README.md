@@ -59,7 +59,7 @@ replace-able by regex (as far as I know).
 
 ## Level-based functions
   The level-based version of BetweenFlags is needed for things
-  like finding functions, where then "end" of a function should
+  like finding functions, where the "end" of a function should
   not be confused with the end of an "if" statement inside the
   function. Therefore, the "level" corresponding to that function
   should be zero both on the opening and closing of the function.
