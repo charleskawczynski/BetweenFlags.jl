@@ -1,4 +1,4 @@
-*.png
+src/*.png
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
