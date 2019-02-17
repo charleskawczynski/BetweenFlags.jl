@@ -5,24 +5,24 @@ function main()
   path_separator = Sys.iswindows() ? "\\" : "/"
   println("Testing ",split(@__FILE__, path_separator)[end],"...")
 
-  test_get_between_flags_flat()
-  test_get_between_flags_level_flat()
-  test_get_between_flags_level_flat_practical()
+  test_get_flat()
+  test_get_level_flat()
+  test_get_level_flat_practical()
 
-  test_get_between_flags_level_practical_complex()
+  test_get_level_practical_complex()
 
   test_remove_between_flags()
 end
 
-function test_get_between_flags_flat()
+function test_get_flat()
   s_i1 = "Some text... {GRAB THIS}, some more text {GRAB THIS TOO}..."
-  L_o1 = get_between_flags_flat(s_i1, ["{"], ["}"])
+  L_o1 = get_flat(s_i1, ["{"], ["}"])
   s_i2 = "Some text... {GRAB THIS}, some more text {GRAB THIS TOO}..."
-  L_o2 = get_between_flags_flat(s_i2, ["{"], ["}"], false)
+  L_o2 = get_flat(s_i2, ["{"], ["}"], false)
   s_i3 = "Some text... {GRAB THIS), } some more text {GRAB THIS TOO}..."
-  L_o3 = get_between_flags_flat(s_i3, ["{"], ["}", ")"])
+  L_o3 = get_flat(s_i3, ["{"], ["}", ")"])
   s_i4 = "Some text... {GRAB THIS), } some more text {GRAB THIS TOO}..."
-  L_o4 = get_between_flags_flat(s_i4, ["{"], ["}", ")"], false)
+  L_o4 = get_flat(s_i4, ["{"], ["}", ")"], false)
 
   @testset begin
       @test L_o1[1]=="{GRAB THIS}"
@@ -36,15 +36,15 @@ function test_get_between_flags_flat()
   end
 end
 
-function test_get_between_flags_level_flat()
+function test_get_level_flat()
   s_i1 = "Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}..."
-  L_o1 = get_between_flags_level_flat(s_i1, ["{"], ["}"])
+  L_o1 = get_level_flat(s_i1, ["{"], ["}"])
   s_i2 = "Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}..."
-  L_o2 = get_between_flags_level_flat(s_i2, ["{"], ["}"], false)
+  L_o2 = get_level_flat(s_i2, ["{"], ["}"], false)
   s_i3 = "Some text... {GRAB {THIS}), } some more text {GRAB THIS TOO}..."
-  L_o3 = get_between_flags_level_flat(s_i3, ["{"], ["}", ")"])
+  L_o3 = get_level_flat(s_i3, ["{"], ["}", ")"])
   s_i4 = "Some text... {GRAB {THIS}), } some more text {GRAB THIS TOO}..."
-  L_o4 = get_between_flags_level_flat(s_i4, ["{"], ["}", ")"], false)
+  L_o4 = get_level_flat(s_i4, ["{"], ["}", ")"], false)
 
   @testset begin
       @test L_o1[1]=="{GRAB {THIS}}"
@@ -58,7 +58,7 @@ function test_get_between_flags_level_flat()
   end
 end
 
-function test_get_between_flags_level_flat_practical()
+function test_get_level_flat_practical()
   s_i = ""
   s_i = string(s_i, "\n", "Some text")
   s_i = string(s_i, "\n", "function myfunc()")
@@ -71,7 +71,7 @@ function test_get_between_flags_level_flat_practical()
   s_i = string(s_i, "\n", "  more stuff")
   s_i = string(s_i, "\n", "end")
   s_i = string(s_i, "\n", "more text")
-  L_o = get_between_flags_level_flat(s_i, ["function ", "if "], [" end", "\nend"])
+  L_o = get_level_flat(s_i, ["function ", "if "], [" end", "\nend"])
 
   s_o = ""
   s_o = string(s_o,       "function myfunc()")
@@ -89,7 +89,7 @@ function test_get_between_flags_level_flat_practical()
   end
 end
 
-function test_get_between_flags_level_practical_complex()
+function test_get_level_practical_complex()
   s_i = ""
   s_i = string(s_i, "\n", "Some text")
   s_i = string(s_i, "\n", "if something")
@@ -129,7 +129,7 @@ function test_get_between_flags_level_practical_complex()
     Flag("end",      word_boundaries_left, word_boundaries_right)
   )]
 
-  L_o = get_between_flags_level(s_i, FS_outer, FS_inner)
+  L_o = get_level(s_i, FS_outer, FS_inner)
 
   s_o = ""
   s_o = string(s_o,       " function myfunc()") # The extra space is due to the left word boundary of the function...
@@ -154,13 +154,13 @@ end
 
 function test_remove_between_flags()
   s_i1 = "Here is some text, and {THIS SHOULD BE REMOVED}, FeaturedFuncs offers a simple interface..."
-  s_o1 = remove_between_flags_flat(s_i1, ["{"], ["}"])
+  s_o1 = remove_flat(s_i1, ["{"], ["}"])
   s_i2 = "Here is some text, and {THIS SHOULD BE REMOVED}, FeaturedFuncs offers a simple interface..."
-  s_o2 = remove_between_flags_flat(s_i2, ["{"], ["}"], false)
+  s_o2 = remove_flat(s_i2, ["{"], ["}"], false)
   s_i3 = "Here is some text, and {THIS SHOULD BE REMOVED), FeaturedFuncs} offers a simple interface..."
-  s_o3 = remove_between_flags_flat(s_i3, ["{"], ["}", ")"])
+  s_o3 = remove_flat(s_i3, ["{"], ["}", ")"])
   s_i4 = "Here is some text, and {THIS SHOULD BE REMOVED), FeaturedFuncs} offers a simple interface..."
-  s_o4 = remove_between_flags_flat(s_i3, ["{"], ["}", ")"], false)
+  s_o4 = remove_flat(s_i3, ["{"], ["}", ")"], false)
 
   @testset begin
       @test s_o1=="Here is some text, and , FeaturedFuncs offers a simple interface..."

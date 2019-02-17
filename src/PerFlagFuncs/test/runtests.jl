@@ -19,15 +19,15 @@ function test_merge_odd_even()
 end
 
 function test_get_alternating_consecutive_vector()
-  # This function is a bit difficult to test. Instead
-  # of writing tests, the inputs and outputs are
-  # be printed to manually ensure that the outputs
-  # are what we expect.
+  # This function is a bit difficult to test automatically.
+  # Instead of writing tests, the inputs and outputs are
+  # be printed to manually ensure that the outputs are what
+  # we expect.
   print_IO = false
   N_A = Base.rand(10:50)[1]
   N_B = Base.rand(10:50)[1]
   if print_IO
-    print("\n ********************************************************** test_get_alternating_consecutive_vector \n")
+    print("\n ******************* test_get_alternating_consecutive_vector \n")
     print("N_A = ", N_A,"\n")
     print("N_B = ", N_B,"\n")
   end
@@ -64,7 +64,7 @@ function test_get_alternating_consecutive_vector()
   M = merge_even_odd(C, D)
   if print_IO
     print(M, "\n")
-    print("\n ********************************************************** \n")
+    print("\n ******************* \n")
   end
 end
 

@@ -108,7 +108,9 @@ function get_alternating_consecutive_vector(A::Vector{Int64},
     for (i, a) in enumerate(A)
       found = false
       for (j, b) in enumerate(B_available)
-        cond_outer = level_outer_given ? level_outer[a]==1 && level_outer[a-1]==0 && level_outer[b]==1 && level_outer[b+1]==0 : true
+        start_match = level_outer[a]==1 && level_outer[a-1]==0
+        stop_match  = level_outer[b]==1 && level_outer[b+1]==0
+        cond_outer = level_outer_given ? start_match && stop_match : true
         cond_total = level_total[a]==level_total[b]
         cond_i1 = (b > a)
         cond_i2 = ( true || a == A[1] )

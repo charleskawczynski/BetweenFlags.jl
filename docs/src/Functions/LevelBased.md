@@ -7,6 +7,8 @@
 
 ##  Examples:
 
+Consider trying to grab all functions defined in a file.
+
 ```
   s_i = ""
   s_i = string(s_i, "\n", "Some text")

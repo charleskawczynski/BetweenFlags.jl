@@ -2,7 +2,6 @@ module UtilityFuncs
 
 using PerFlagFuncs
 
-export svec
 export Flag
 export FlagSet
 export substring_decomp_by_index
@@ -10,8 +9,30 @@ export compute_level_total
 export compute_level_per_flag
 export get_remaining_flags
 
-svec = Vector{String}
-
+"""
+```
+Flag(word::String,
+     word_boundaries_left::Vector{String},
+     word_boundaries_right::Vector{String})
+```
+A flag that BetweenFlags looks for to denote
+the start/stop position of a given "level" or
+scope. The word boundaries need only be unique
+since every permutation of left and right
+word boundaries are taken to determine levels.
+```
+julia>
+using BetweenFlags
+# find: ["\\nfunction", " function", ";function"]
+start_flag = BetweenFlags.Flag("function",
+                               ["\\n", "\\s", ";"],
+                               ["\\n", "\\s"])
+# find: ["\\nend", " end", ";end"]
+stop_flag = BetweenFlags.Flag("end",
+                              ["\\n", "\\s", ";"],
+                              ["\\n", "\\s", ";"])
+```
+"""
 struct Flag
   word :: String
   word_boundaries_left :: Vector{String}
@@ -28,17 +49,44 @@ struct Flag
   end
 end
 
+"""
+```
+FlagSet(start::Flag,
+        stop::Flag)
+```
+A flag set that defines the start and stop of
+the substring of interest.
+
+```
+julia>
+using BetweenFlags
+# find: ["\\nfunction", " function", ";function"]
+start_flag = BetweenFlags.Flag("function",
+                               ["\\n", "\\s", ";"],
+                               ["\\n", "\\s"])
+# find: ["\\nend", " end", ";end"]
+stop_flag = BetweenFlags.Flag("end",
+                              ["\\n", "\\s", ";"],
+                              ["\\n", "\\s", ";"])
+flag_set = FlagSet(start_flag, stop_flag)
+```
+"""
 struct FlagSet
   start :: Flag
   stop  :: Flag
   ID  :: String
   function FlagSet(start::Flag, stop::Flag)
-    # return new(start, stop, start.word*stop.word)
+    # return new(start, stop, start.word*stop.word) # needs testing
     return new(start, stop, start.word)
   end
 end
 
-function substring_decomp_by_index(s::String, i_start::Int, i_end::Int, flags_start::svec, flags_stop::svec, inclusive::Bool = true)
+function substring_decomp_by_index(s::String,
+                                   i_start::Int,
+                                   i_end::Int,
+                                   flags_start::Vector{String},
+                                   flags_stop::Vector{String},
+                                   inclusive::Bool = true)
   if inclusive # middle and after depend on length of stop flag (LSTOP)...
     LSTOP = [length(x) for x in flags_stop if occursin(x, s[i_end:end])][1]
     before = s[1:i_start-1]
@@ -53,7 +101,9 @@ function substring_decomp_by_index(s::String, i_start::Int, i_end::Int, flags_st
   return before, middle, after
 end
 
-function compute_level_total(s::String, flags_start::svec, flags_stop::svec)
+function compute_level_total(s::String,
+                             flags_start::Vector{String},
+                             flags_stop::Vector{String})
   L_s = length(s)
   level = zeros(Int, L_s)
   D_o = Dict(x => length(x) for x in flags_start)
@@ -74,7 +124,9 @@ function compute_level_total(s::String, flags_start::svec, flags_stop::svec)
   return level
 end
 
-function compute_level_per_flag(s::String, level_total::Vector{Int}, flag_set_all::Vector{FlagSet})
+function compute_level_per_flag(s::String,
+                                level_total::Vector{Int},
+                                flag_set_all::Vector{FlagSet})
   # Algorithm:
   # 1) Initialize level_total_modified = level_total_total
   # 2) Find the maximum of level_total_modified and
@@ -112,7 +164,9 @@ function compute_level_per_flag(s::String, level_total::Vector{Int}, flag_set_al
   return D
 end
 
-function get_remaining_flags(s::String, flags_start::svec, flags_stop::svec)::Bool
+function get_remaining_flags(s::String,
+                             flags_start::Vector{String},
+                             flags_stop::Vector{String})::Bool
   same_flags = all([x==y for x in flags_start for y in flags_stop])
   if same_flags
     remaining_flags = any([y in s for y in flags_start]) && any([y in s for y in flags_stop])
