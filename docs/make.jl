@@ -20,6 +20,7 @@ makedocs(
   "Functions" => Any[
                "Functions/Greedy.md",
                "Functions/LevelBased.md",
+               "Functions/api.md",
               ],
   ],
 )

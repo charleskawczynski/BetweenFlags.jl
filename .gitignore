@@ -1,4 +1,5 @@
 src/*.png
+*.bat
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
