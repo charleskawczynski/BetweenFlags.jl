@@ -72,4 +72,20 @@ var documenterSearchIndex = {"docs": [
     "text": "  s_i = \"\"\r\n  s_i = string(s_i, \"\\n\", \"Some text\")\r\n  s_i = string(s_i, \"\\n\", \"if something\")\r\n  s_i = string(s_i, \"\\n\", \"  function myfunc()\")\r\n  s_i = string(s_i, \"\\n\", \"    more stuff\")\r\n  s_i = string(s_i, \"\\n\", \"    if something\")\r\n  s_i = string(s_i, \"\\n\", \"      print(\'something\')\")\r\n  s_i = string(s_i, \"\\n\", \"    else\")\r\n  s_i = string(s_i, \"\\n\", \"      print(\'not something\')\")\r\n  s_i = string(s_i, \"\\n\", \"    end\")\r\n  s_i = string(s_i, \"\\n\", \"    for something\")\r\n  s_i = string(s_i, \"\\n\", \"      print(\'something\')\")\r\n  s_i = string(s_i, \"\\n\", \"    else\")\r\n  s_i = string(s_i, \"\\n\", \"      print(\'not something\')\")\r\n  s_i = string(s_i, \"\\n\", \"    end\")\r\n  s_i = string(s_i, \"\\n\", \"    more stuff\")\r\n  s_i = string(s_i, \"\\n\", \"  end\")\r\n  s_i = string(s_i, \"\\n\", \"end\")\r\n  s_i = string(s_i, \"\\n\", \"more text\")\r\n\r\n  word_boundaries_left = [\"\\n\", \" \", \";\"]\r\n  word_boundaries_right = [\"\\n\", \" \", \";\"]\r\n  word_boundaries_right_if = [\" \", \";\"]\r\n\r\n  FS_outer = FlagSet(\r\n    Flag(\"function\", word_boundaries_left, word_boundaries_right),\r\n    Flag(\"end\",      word_boundaries_left, word_boundaries_right)\r\n  )\r\n\r\n  FS_inner = [\r\n  FlagSet(\r\n    Flag(\"if\",       word_boundaries_left, word_boundaries_right_if),\r\n    Flag(\"end\",      word_boundaries_left, word_boundaries_right)\r\n  ),\r\n  FlagSet(\r\n    Flag(\"for\",      word_boundaries_left, word_boundaries_right),\r\n    Flag(\"end\",      word_boundaries_left, word_boundaries_right)\r\n  )]\r\n\r\n  L_o = get_between_flags_level(s_i, FS_outer, FS_inner)\r\n  print(\"\\n -------------- results from complex example: \\n\")\r\n  print(L_o[1])\r\n  print(\"\\n --------------\\n\")\r\n\r\n -------------- results from complex example:\r\n function myfunc()\r\n    more stuff\r\n    if something\r\n      print(\'something\')\r\n    else\r\n      print(\'not something\')\r\n    end\r\n    for something\r\n      print(\'something\')\r\n    else\r\n      print(\'not something\')\r\n    end\r\n    more stuff\r\n  end\r\n\r\n --------------\r\n"
 },
 
+{
+    "location": "Functions/api/#",
+    "page": "BetweenFlags API Documentation",
+    "title": "BetweenFlags API Documentation",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "Functions/api/#BetweenFlags-API-Documentation-1",
+    "page": "BetweenFlags API Documentation",
+    "title": "BetweenFlags API Documentation",
+    "category": "section",
+    "text": "CurrentModule = BetweenFlagsBetweenFlags.Flag\nBetweenFlags.FlagSetBetweenFlags.get_between_flags_flat\nBetweenFlags.get_between_flags_level\nBetweenFlags.get_between_flags_level_flat\nBetweenFlags.remove_between_flags_flatBetweenFlags.split_by_consecutives\nBetweenFlags.count_flags\nBetweenFlags.find_next_iter\nBetweenFlags.merge_even_odd\nBetweenFlags.get_alternating_consecutive_vectorBetweenFlags.svec\nBetweenFlags.Flag\nBetweenFlags.FlagSet\nBetweenFlags.substring_decomp_by_index\nBetweenFlags.compute_level_total\nBetweenFlags.compute_level_per_flag\nBetweenFlags.get_remaining_flags"
+},
+
 ]}
