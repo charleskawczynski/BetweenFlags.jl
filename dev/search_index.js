@@ -29,7 +29,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Greedy functions",
     "title": "Greedy functions",
     "category": "section",
-    "text": "The greedy BetweenFlags functions are similar to regex pattern matching.   The greedy BetweenFlags functions are useful for processing strings to, e.g., remove comments,   where after opening a comment (e.g. triple \"), the first instance of closing the comment must be recognized.BetweenFlags.get_between_flags_flat(args...)Whereargs = [s::String, flags_start::Vector{String}, flags_stop::Vector{String}]"
+    "text": "The greedy BetweenFlags functions are similar to regex pattern matching.   The greedy BetweenFlags functions are useful for processing strings to, e.g., remove comments,   where after opening a comment (e.g. triple \"), the first instance of closing the comment must be recognized."
 },
 
 {
@@ -37,7 +37,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Greedy functions",
     "title": "Examples",
     "category": "section",
-    "text": "  using BetweenFlags\n  s = \"Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface...\"\n  s = BetweenFlags.get_between_flags_flat(s, [\"{\"], [\"}\"])\n  print(s)\n{THIS SHOULD BE GRABBED}\n\n  s = \"Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface...\"\n  s = BetweenFlags.get_between_flags_flat(s, [\"{\"], [\"}\", \")\"])\n  print(s)\n{THIS SHOULD BE GRABBED)"
+    "text": "  using BetweenFlags\r\n  s = \"Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface...\"\r\n  s = BetweenFlags.get_between_flags_flat(s, [\"{\"], [\"}\"])\r\n  print(s)\r\n{THIS SHOULD BE GRABBED}\r\n\r\n  s = \"Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface...\"\r\n  s = BetweenFlags.get_between_flags_flat(s, [\"{\"], [\"}\", \")\"])\r\n  print(s)\r\n{THIS SHOULD BE GRABBED)"
 },
 
 {
@@ -45,7 +45,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Greedy functions",
     "title": "Note",
     "category": "section",
-    "text": "These functions are effectively replace-able by regex. They do, however, provide a nice interface. The level-based functions are not, in general, replace-able by regex (as far as I know)."
+    "text": "These functions are effectively replaceable by regex. They do, however, provide a nice interface. The level-based functions are not, in general, replaceable by regex."
 },
 
 {
@@ -61,7 +61,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Level-based functions",
     "title": "Level-based functions",
     "category": "section",
-    "text": "The level-based version of BetweenFlags is needed for things   like finding functions, where then \"end\" of a function should   not be confused with the end of an \"if\" statement inside the   function. Therefore, the \"level\" corresponding to that function   should be zero both on the opening and closing of the function."
+    "text": "The level-based version of BetweenFlags is needed for things   like finding functions, where then \"end\" of a function should   not be confused with the \"end\" of an if statement inside the   function. Therefore, the \"level\" corresponding to that function   should be zero, both on the opening and closing of the function."
 },
 
 {
@@ -73,19 +73,59 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "Functions/api/#",
-    "page": "BetweenFlags API Documentation",
-    "title": "BetweenFlags API Documentation",
+    "location": "api/#",
+    "page": "API",
+    "title": "API",
     "category": "page",
     "text": ""
 },
 
 {
-    "location": "Functions/api/#BetweenFlags-API-Documentation-1",
-    "page": "BetweenFlags API Documentation",
+    "location": "api/#UtilityFuncs.Flag",
+    "page": "API",
+    "title": "UtilityFuncs.Flag",
+    "category": "type",
+    "text": "Flag(word::String,\n     word_boundaries_left::Vector{String},\n     word_boundaries_right::Vector{String})\n\nA flag that BetweenFlags looks for to denote the start/stop position of a given \"level\" or scope. The word boundaries need only be unique since every permutation of left and right word boundaries are taken to determine levels.\n\njulia>\nusing BetweenFlags\n# find: [\"\\nfunction\", \" function\", \";function\"]\nstart_flag = BetweenFlags.Flag(\"function\",\n                               [\"\\n\", \"\\s\", \";\"],\n                               [\"\\n\", \"\\s\"])\n# find: [\"\\nend\", \" end\", \";end\"]\nstop_flag = BetweenFlags.Flag(\"end\",\n                              [\"\\n\", \"\\s\", \";\"],\n                              [\"\\n\", \"\\s\", \";\"])\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#UtilityFuncs.FlagSet",
+    "page": "API",
+    "title": "UtilityFuncs.FlagSet",
+    "category": "type",
+    "text": "FlagSet(start::Flag,\n        stop::Flag)\n\nA flag set that defines the start and stop of the substring of interest.\n\njulia>\nusing BetweenFlags\n# find: [\"\\nfunction\", \" function\", \";function\"]\nstart_flag = BetweenFlags.Flag(\"function\",\n                               [\"\\n\", \"\\s\", \";\"],\n                               [\"\\n\", \"\\s\"])\n# find: [\"\\nend\", \" end\", \";end\"]\nstop_flag = BetweenFlags.Flag(\"end\",\n                              [\"\\n\", \"\\s\", \";\"],\n                              [\"\\n\", \"\\s\", \";\"])\nflag_set = FlagSet(start_flag, stop_flag)\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#FeaturedFuncs.get_flat",
+    "page": "API",
+    "title": "FeaturedFuncs.get_flat",
+    "category": "function",
+    "text": "get_flat(start::Flag,\n        stop::Flag)\n\ngetflat gets the substring based on the `flagsstartandflags_stop` vectors, and a Bool which determines whether the flags themselves should be returned or not.\n\nThis function will grab the inner-most string, assuming that you do not have multiple start flags before reaching a corresponding stop flag.\n\njulia> s = \"Some text... {GRAB THIS}, some more text {GRAB THIS TOO}...\"\n\"Some text... {GRAB THIS}, some more text {GRAB THIS TOO}...\"\n\njulia> L = BetweenFlags.get_flat(s, [\"{\"], [\"}\"])\n2-element Array{String,1}:\n \"{GRAB THIS}\"\n \"{GRAB THIS TOO}\"\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#FeaturedFuncs.get_level_flat",
+    "page": "API",
+    "title": "FeaturedFuncs.get_level_flat",
+    "category": "function",
+    "text": "get_level_flat(s::String,\n               flags_start::Vector{String},\n               flags_stop::Vector{String},\n               inclusive::Bool = true)\n\ngetlevelflat gets the substring based on the flags_start and flags_stop vectors, and a Bool which determines whether the flags themselves should be returned or not.\n\nThis function will grab the outer-most string by ignoring stop flags when multiple start flags occur before stop flags.\n\njulia> using BetweenFlags\n\njulia> s = \"Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}...\"\n\"Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}...\"\n\njulia> L = BetweenFlags.get_level_flat(s, [\"{\"], [\"}\"])\n2-element Array{String,1}:\n \"{GRAB {THIS}}\"\n \"{GRAB THIS TOO}\"\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#FeaturedFuncs.get_level",
+    "page": "API",
+    "title": "FeaturedFuncs.get_level",
+    "category": "function",
+    "text": "get_level(s::String,\n          outer_flags::FlagSet,\n          inner_flags::Vector{FlagSet},\n          inclusive::Bool = true)\n\nget_level is the main featured function of BetweenFlags.\n\ngetlevel gets the substring based on the `outerflags,inner_flagsFlagSet`\'s, and a Bool which determines whether the flags themselves should be returned or not.\n\nTo see an example of this function in action, see the test_get_level_practical_complex function in test suite.\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#BetweenFlags-API-Documentation-1",
+    "page": "API",
     "title": "BetweenFlags API Documentation",
     "category": "section",
-    "text": "CurrentModule = BetweenFlagsBetweenFlags.Flag\nBetweenFlags.FlagSetBetweenFlags.get_flat\nBetweenFlags.get_level_flat\nBetweenFlags.get_level"
+    "text": "CurrentModule = BetweenFlagsBetweenFlags.Flag\r\nBetweenFlags.FlagSetBetweenFlags.get_flat\r\nBetweenFlags.get_level_flat\r\nBetweenFlags.get_level"
 },
 
 ]}

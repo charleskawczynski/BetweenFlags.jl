@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>API · BetweenFlags.jl</title><link rel="canonical" href="https://charleskawczynski.github.io/BetweenFlags.jl/stable/api/index.html"/><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../index.html"><img class="logo" src="../assets/logo.png" alt="BetweenFlags.jl logo"/></a><h1>BetweenFlags.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">Home</a></li><li><span class="toctext">Functions</span><ul><li><a class="toctext" href="../Functions/Greedy/">Greedy functions</a></li><li><a class="toctext" href="../Functions/LevelBased/">Level-based functions</a></li></ul></li><li class="current"><a class="toctext" href>API</a><ul class="internal"></ul></li></ul></nav><article id="docs"><header><nav><ul><li><a href>API</a></li></ul><a class="edit-page" href="https://github.com/charleskawczynski/BetweenFlags.jl/blob/master/docs/src/api.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>API</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="BetweenFlags-API-Documentation-1" href="#BetweenFlags-API-Documentation-1">BetweenFlags API Documentation</a></h1><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="UtilityFuncs.Flag" href="#UtilityFuncs.Flag"><code>UtilityFuncs.Flag</code></a> — <span class="docstring-category">Type</span>.</div><div><div><pre><code class="language-none">Flag(word::String,
+     word_boundaries_left::Vector{String},
+     word_boundaries_right::Vector{String})</code></pre><p>A flag that BetweenFlags looks for to denote the start/stop position of a given &quot;level&quot; or scope. The word boundaries need only be unique since every permutation of left and right word boundaries are taken to determine levels.</p><pre><code class="language-none">julia&gt;
+using BetweenFlags
+# find: [&quot;\nfunction&quot;, &quot; function&quot;, &quot;;function&quot;]
+start_flag = BetweenFlags.Flag(&quot;function&quot;,
+                               [&quot;\n&quot;, &quot;\s&quot;, &quot;;&quot;],
+                               [&quot;\n&quot;, &quot;\s&quot;])
+# find: [&quot;\nend&quot;, &quot; end&quot;, &quot;;end&quot;]
+stop_flag = BetweenFlags.Flag(&quot;end&quot;,
+                              [&quot;\n&quot;, &quot;\s&quot;, &quot;;&quot;],
+                              [&quot;\n&quot;, &quot;\s&quot;, &quot;;&quot;])</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/charleskawczynski/BetweenFlags.jl/blob/d09d496027efe028ef36adbd085f4c575ead0fd2/src/UtilityFuncs/src/UtilityFuncs.jl#L12-L35">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="UtilityFuncs.FlagSet" href="#UtilityFuncs.FlagSet"><code>UtilityFuncs.FlagSet</code></a> — <span class="docstring-category">Type</span>.</div><div><div><pre><code class="language-none">FlagSet(start::Flag,
+        stop::Flag)</code></pre><p>A flag set that defines the start and stop of the substring of interest.</p><pre><code class="language-none">julia&gt;
+using BetweenFlags
+# find: [&quot;\nfunction&quot;, &quot; function&quot;, &quot;;function&quot;]
+start_flag = BetweenFlags.Flag(&quot;function&quot;,
+                               [&quot;\n&quot;, &quot;\s&quot;, &quot;;&quot;],
+                               [&quot;\n&quot;, &quot;\s&quot;])
+# find: [&quot;\nend&quot;, &quot; end&quot;, &quot;;end&quot;]
+stop_flag = BetweenFlags.Flag(&quot;end&quot;,
+                              [&quot;\n&quot;, &quot;\s&quot;, &quot;;&quot;],
+                              [&quot;\n&quot;, &quot;\s&quot;, &quot;;&quot;])
+flag_set = FlagSet(start_flag, stop_flag)</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/charleskawczynski/BetweenFlags.jl/blob/d09d496027efe028ef36adbd085f4c575ead0fd2/src/UtilityFuncs/src/UtilityFuncs.jl#L52-L73">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="FeaturedFuncs.get_flat" href="#FeaturedFuncs.get_flat"><code>FeaturedFuncs.get_flat</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">get_flat(start::Flag,
+        stop::Flag)</code></pre><p>get<em>flat gets the substring based on the `flags</em>start<code>and</code>flags_stop` vectors, and a Bool which determines whether the flags themselves should be returned or not.</p><p>This function will grab the inner-most string, assuming that you do not have multiple start flags before reaching a corresponding stop flag.</p><pre><code class="language-none">julia&gt; s = &quot;Some text... {GRAB THIS}, some more text {GRAB THIS TOO}...&quot;
+&quot;Some text... {GRAB THIS}, some more text {GRAB THIS TOO}...&quot;
+
+julia&gt; L = BetweenFlags.get_flat(s, [&quot;{&quot;], [&quot;}&quot;])
+2-element Array{String,1}:
+ &quot;{GRAB THIS}&quot;
+ &quot;{GRAB THIS TOO}&quot;</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/charleskawczynski/BetweenFlags.jl/blob/d09d496027efe028ef36adbd085f4c575ead0fd2/src/FeaturedFuncs/src/FeaturedFuncs.jl#L14-L36">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="FeaturedFuncs.get_level_flat" href="#FeaturedFuncs.get_level_flat"><code>FeaturedFuncs.get_level_flat</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">get_level_flat(s::String,
+               flags_start::Vector{String},
+               flags_stop::Vector{String},
+               inclusive::Bool = true)</code></pre><p>get<em>level</em>flat gets the substring based on the <code>flags_start</code> and <code>flags_stop</code> vectors, and a Bool which determines whether the flags themselves should be returned or not.</p><p>This function will grab the outer-most string by ignoring stop flags when multiple start flags occur before stop flags.</p><pre><code class="language-none">julia&gt; using BetweenFlags
+
+julia&gt; s = &quot;Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}...&quot;
+&quot;Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}...&quot;
+
+julia&gt; L = BetweenFlags.get_level_flat(s, [&quot;{&quot;], [&quot;}&quot;])
+2-element Array{String,1}:
+ &quot;{GRAB {THIS}}&quot;
+ &quot;{GRAB THIS TOO}&quot;</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/charleskawczynski/BetweenFlags.jl/blob/d09d496027efe028ef36adbd085f4c575ead0fd2/src/FeaturedFuncs/src/FeaturedFuncs.jl#L57-L82">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="FeaturedFuncs.get_level" href="#FeaturedFuncs.get_level"><code>FeaturedFuncs.get_level</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">get_level(s::String,
+          outer_flags::FlagSet,
+          inner_flags::Vector{FlagSet},
+          inclusive::Bool = true)</code></pre><p>get_level is the main featured function of BetweenFlags.</p><p>get<em>level gets the substring based on the `outer</em>flags<code>,</code>inner_flags<code></code>FlagSet`&#39;s, and a Bool which determines whether the flags themselves should be returned or not.</p><p>To see an example of this function in action, see the <a href="@ref"><code>test_get_level_practical_complex</code></a> function in test suite.</p></div></div><a class="source-link" target="_blank" href="https://github.com/charleskawczynski/BetweenFlags.jl/blob/d09d496027efe028ef36adbd085f4c575ead0fd2/src/FeaturedFuncs/src/FeaturedFuncs.jl#L106-L121">source</a></section><footer><hr/><a class="previous" href="../Functions/LevelBased/"><span class="direction">Previous</span><span class="title">Level-based functions</span></a></footer></article></body></html>
