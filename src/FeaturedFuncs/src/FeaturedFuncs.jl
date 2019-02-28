@@ -89,11 +89,11 @@ function get_level_flat(s::String,
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
   L_start = unique(L_start)
   L_stop = unique(L_stop)
-  sort!(L_start)
-  sort!(L_stop)
   if L_start==[] || L_stop==[]
     return L
   end
+  sort!(L_start)
+  sort!(L_stop)
   level = compute_level_total(s, flags_start, flags_stop)
   (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop, level)
   for (i_start, i_stop) in zip(L_start, L_stop)
@@ -136,11 +136,11 @@ function get_level(s::String,
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
   L_start = unique(L_start)
   L_stop = unique(L_stop)
-  sort!(L_start)
-  sort!(L_stop)
   if L_start==[] || L_stop==[]
     return L
   end
+  sort!(L_start)
+  sort!(L_stop)
   level_total = compute_level_total(s, flags_start, flags_stop)
   level_per_flags = compute_level_per_flag(s, level_total, flag_set_all)
   level_outer = level_per_flags[outer_flags.ID]

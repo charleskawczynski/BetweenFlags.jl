@@ -79,6 +79,14 @@ function get_alternating_consecutive_vector(A::Vector{Int64},
                                             level_total=nothing,
                                             level_outer=nothing,
                                             s=nothing)
+  e = Vector{Int64}(undef, 0)
+  (C, D) = Tuple([e, e])
+  if isempty(A)
+    return (C, D)
+  end
+  if isempty(B)
+    return (C, D)
+  end
   N_AB = max(A..., B...)
   s_given = !(s == nothing)
   level_given = !(level_total == nothing)
@@ -99,8 +107,6 @@ function get_alternating_consecutive_vector(A::Vector{Int64},
   end
 
   L = Vector{Int64}(undef, 0)
-  e = Vector{Int64}(undef, 0)
-  (C, D) = Tuple([e, e])
   B_available = B
   if length(A) > 0 && length(B) > 0
     b_previous = B[1]

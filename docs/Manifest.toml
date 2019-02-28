@@ -45,9 +45,9 @@ version = "0.6.0"
 
 [[Documenter]]
 deps = ["Base64", "DocStringExtensions", "InteractiveUtils", "LibGit2", "Logging", "Markdown", "Pkg", "REPL", "Random", "Test", "Unicode"]
-git-tree-sha1 = "de745be4b00336588ab3269d5f43517e5c012973"
+git-tree-sha1 = "a8c41ba3d0861240dbec942ee1d0f86c57c37c1c"
 uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-version = "0.21.1"
+version = "0.21.5"
 
 [[DocumenterTools]]
 deps = ["Base64", "DocStringExtensions", "LibGit2", "Pkg", "Test"]
