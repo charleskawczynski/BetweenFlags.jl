@@ -93,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "UtilityFuncs.FlagSet",
     "category": "type",
-    "text": "FlagSet(start::Flag,\n        stop::Flag)\n\nA flag set that defines the start and stop of the substring of interest.\n\njulia>\nusing BetweenFlags\n# find: [\"\\nfunction\", \" function\", \";function\"]\nstart_flag = BetweenFlags.Flag(\"function\",\n                               [\"\\n\", \"\\s\", \";\"],\n                               [\"\\n\", \"\\s\"])\n# find: [\"\\nend\", \" end\", \";end\"]\nstop_flag = BetweenFlags.Flag(\"end\",\n                              [\"\\n\", \"\\s\", \";\"],\n                              [\"\\n\", \"\\s\", \";\"])\nflag_set = FlagSet(start_flag, stop_flag)\n\n\n\n\n\n"
+    "text": "FlagSet(start::Flag, stop::Flag)\n\nA flag set that defines the start and stop of the substring of interest.\n\njulia>\nusing BetweenFlags\n# find: [\"\\nfunction\", \" function\", \";function\"]\nstart_flag = BetweenFlags.Flag(\"function\",\n                               [\"\\n\", \"\\s\", \";\"],\n                               [\"\\n\", \"\\s\"])\n# find: [\"\\nend\", \" end\", \";end\"]\nstop_flag = BetweenFlags.Flag(\"end\",\n                              [\"\\n\", \"\\s\", \";\"],\n                              [\"\\n\", \"\\s\", \";\"])\nflag_set = FlagSet(start_flag, stop_flag)\n\n\n\n\n\n"
 },
 
 {
@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "FeaturedFuncs.get_flat",
     "category": "function",
-    "text": "get_flat(start::Flag,\n        stop::Flag)\n\ngetflat gets the substring based on the `flagsstartandflags_stop` vectors, and a Bool which determines whether the flags themselves should be returned or not.\n\nThis function will grab the inner-most string, assuming that you do not have multiple start flags before reaching a corresponding stop flag.\n\njulia> s = \"Some text... {GRAB THIS}, some more text {GRAB THIS TOO}...\"\n\"Some text... {GRAB THIS}, some more text {GRAB THIS TOO}...\"\n\njulia> L = BetweenFlags.get_flat(s, [\"{\"], [\"}\"])\n2-element Array{String,1}:\n \"{GRAB THIS}\"\n \"{GRAB THIS TOO}\"\n\n\n\n\n\n"
+    "text": "get_flat(s::String,\n                  flags_start::Vector{String},\n                  flags_stop::Vector{String},\n                  inclusive::Bool = true)\n\nGets the substring based on the start and stop flag vectors, and a Bool which determines whether the flags themselves should be returned or not.\n\nThis function will grab the inner-most string, assuming that you do not have multiple start flags before reaching a corresponding stop flag.\n\njulia> s = \"Some text... {GRAB THIS}, some more text {GRAB THIS TOO}...\"\n\"Some text... {GRAB THIS}, some more text {GRAB THIS TOO}...\"\n\njulia> L = BetweenFlags.get_flat(s, [\"{\"], [\"}\"])\n2-element Array{String,1}:\n \"{GRAB THIS}\"\n \"{GRAB THIS TOO}\"\n\n\n\n\n\n"
 },
 
 {
@@ -117,7 +117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "FeaturedFuncs.get_level",
     "category": "function",
-    "text": "get_level(s::String,\n          outer_flags::FlagSet,\n          inner_flags::Vector{FlagSet},\n          inclusive::Bool = true)\n\nget_level is the main featured function of BetweenFlags.\n\ngetlevel gets the substring based on the `outerflags,inner_flagsFlagSet`\'s, and a Bool which determines whether the flags themselves should be returned or not.\n\nTo see an example of this function in action, see the test_get_level_practical_complex function in test suite.\n\n\n\n\n\n"
+    "text": "get_level(s::String,\n          outer_flags::FlagSet,\n          inner_flags::Vector{FlagSet},\n          inclusive::Bool = true)\n\nThis is the featured function of BetweenFlags.\n\nGets the substring based on the outer and inner flag sets, and a Bool which determines whether the flags themselves should be returned or not.\n\nTo see an example of this function in action, go to BetweenFlags/test/runtests.jl.\n\n\n\n\n\n"
 },
 
 {
