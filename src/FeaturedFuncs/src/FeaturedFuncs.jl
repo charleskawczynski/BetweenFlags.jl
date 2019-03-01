@@ -13,12 +13,14 @@ export remove_flat
 
 """
 ```
-get_flat(start::Flag,
-        stop::Flag)
+get_flat(s::String,
+                  flags_start::Vector{String},
+                  flags_stop::Vector{String},
+                  inclusive::Bool = true)
 ```
-get_flat gets the substring based on the `flags_start`
-and `flags_stop` vectors, and a Bool which determines
-whether the flags themselves should be returned or not.
+Gets the substring based on the start and stop flag
+vectors, and a Bool which determines whether the flags
+themselves should be returned or not.
 
 This function will grab the inner-most string, assuming
 that you do not have multiple start flags before reaching
@@ -110,14 +112,14 @@ get_level(s::String,
           inner_flags::Vector{FlagSet},
           inclusive::Bool = true)
 ```
-get_level is the main featured function of BetweenFlags.
+This is the featured function of BetweenFlags.
 
-get_level gets the substring based on the `outer_flags`,
-`inner_flags` `FlagSet`'s, and a Bool which determines
-whether the flags themselves should be returned or not.
+Gets the substring based on the outer and inner flag
+sets, and a Bool which determines whether the flags
+themselves should be returned or not.
 
-To see an example of this function in action, see the
-[`test_get_level_practical_complex`](@ref) function in test suite.
+To see an example of this function in action, go to
+BetweenFlags/test/runtests.jl.
 """
 function get_level(s::String,
                    outer_flags::FlagSet,

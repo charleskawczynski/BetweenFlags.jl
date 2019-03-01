@@ -51,8 +51,7 @@ end
 
 """
 ```
-FlagSet(start::Flag,
-        stop::Flag)
+FlagSet(start::Flag, stop::Flag)
 ```
 A flag set that defines the start and stop of
 the substring of interest.
