@@ -177,21 +177,6 @@ function remove_flat(s::String,
     b, m, a = substring_decomp_by_index(s_new, i_start, i_stop, flags_start, flags_stop, inclusive)
     s_new = string(b, a)
   end
-  if length(s_new)>length(s)
-    print("\n-------------------------------- Error: Output string cannot be larger than input string\n")
-    print("\nlength(s)     = {}", length(s))
-    print("\nlength(s_new) = {}", length(s_new))
-    print("\n -------------------------------- \n")
-    print("\n", flags_start, flags_stop)
-    print("\n -------------------------------- \n")
-    print("\n", L_start, L_stop)
-    print("\n -------------------------------- \n")
-    print("\n", s)
-    print("\n -------------------------------- \n")
-    print("\n", s_new)
-    print("\n -------------------------------- \n")
-    error("Output string cannot be larger than input string")
-  end
   return s_new
 end
 
