@@ -27,40 +27,40 @@ To install, use
 # Featured functions
 
 ## Greedy functions
-  The greedy `BetweenFlags` functions are similar to regex pattern matching.
-  The greedy `BetweenFlags` functions are useful for processing strings to, e.g., remove comments,
-  where after opening a comment (e.g. triple `"`), the first instance of closing the comment must be recognized.
+  The greedy `BetweenFlags` functions are similar to regex pattern matching, and
+  are useful for processing strings to, for example, remove comments, where after opening
+  a comment the first instance of closing the comment must be recognized.
 
-`BetweenFlags.get_between_flags_flat(args...)`
-
-Where
-
-`args = [s::String, flags_start::Vector{String}, flags_stop::Vector{String}]`
+```
+BetweenFlags.get_flat(s::String,
+                       flags_start::Vector{String},
+                       flags_stop::Vector{String})
+```
 
 ### Examples
 
 ```
   using BetweenFlags
   s = "Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface..."
-  s = BetweenFlags.get_between_flags_flat(s, ["{"], ["}"])
+  s = get_flat(s, ["{"], ["}"])
   print(s)
 {THIS SHOULD BE GRABBED}
 
   s = "Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface..."
-  s = BetweenFlags.get_between_flags_flat(s, ["{"], ["}", ")"])
+  s = get_flat(s, ["{"], ["}", ")"])
   print(s)
 {THIS SHOULD BE GRABBED)
 ```
 
 ### Note
-These functions are effectively replace-able by regex. They do, however,
+These functions are effectively replaceable by regex. They do, however,
 provide a nice interface. The level-based functions are not, in general,
-replace-able by regex (as far as I know).
+replaceable by regex.
 
 ## Level-based functions
   The level-based version of BetweenFlags is needed for things
-  like finding functions, where the "end" of a function should
-  not be confused with the end of an "if" statement inside the
+  like finding functions, where the "end" of a `function` cannot
+  be confused with the "end" of an `if` statement inside the
   function. Therefore, the "level" corresponding to that function
   should be zero both on the opening and closing of the function.
 
@@ -106,7 +106,7 @@ replace-able by regex (as far as I know).
     Flag("end",      word_boundaries_left, word_boundaries_right)
   )]
 
-  L_o = get_between_flags_level(s_i, FS_outer, FS_inner)
+  L_o = get_level(s_i, FS_outer, FS_inner)
   print("\n -------------- results from complex example: \n")
   print(L_o[1])
   print("\n --------------\n")

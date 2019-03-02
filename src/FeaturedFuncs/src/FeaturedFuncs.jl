@@ -154,16 +154,29 @@ function get_level(s::String,
   return L
 end
 
+"""
+```
+remove_flat(s::String,
+                     flags_start::Vector{String},
+                     flags_stop::Vector{String},
+                     inclusive::Bool = true,
+                     reverse_order::Bool = false)
+```
+Removes text between flags.
+
+The remove function is fundamentally different from get_level because
+the string, `s`, in `get_level` does not change, whereas it does in
+`remove_flat`. Therefore, the indexes found must, either be translated
+by the number of removed characters in the correct location, or the
+entire function must be called recursively. Alternatively, the
+strings/flags can be removed in reverse order, preserving the output
+string, which is what is done here.
+"""
 function remove_flat(s::String,
                      flags_start::Vector{String},
                      flags_stop::Vector{String},
                      inclusive::Bool = true,
                      reverse_order::Bool = false)
-  """ remove_between_flags (RBF) is fundamentally different from get_between_flags (GBF) because
-        the string, s, in GBF does not change, whereas it does in RBG. Therefore, the indexes found
-        must, either be translated by the number of removed characters in the correct location, or
-        the entire function must be called recursively. Alternatively, the strings/flags can be removed
-        in reverse order, preserving the output string, which is what is done here."""
   if !get_remaining_flags(s, flags_start, flags_stop)
     return s
   end

@@ -8,12 +8,12 @@
 ```
   using BetweenFlags
   s = "Here is some text, and {THIS SHOULD BE GRABBED}, BetweenFlags offers a simple interface..."
-  s = BetweenFlags.get_between_flags_flat(s, ["{"], ["}"])
+  s = get_flat(s, ["{"], ["}"])
   print(s)
 {THIS SHOULD BE GRABBED}
 
   s = "Here is some text, and {THIS SHOULD BE GRABBED), BetweenFlags} offers a simple interface..."
-  s = BetweenFlags.get_between_flags_flat(s, ["{"], ["}", ")"])
+  s = get_flat(s, ["{"], ["}", ")"])
   print(s)
 {THIS SHOULD BE GRABBED)
 ```

@@ -1,9 +1,9 @@
 # Level-based functions
   The level-based version of BetweenFlags is needed for things
-  like finding functions, where then "end" of a `function` should
-  not be confused with the "end" of an `if` statement inside the
+  like finding functions, where then "end" of a `function` cannot
+  be confused with the "end" of an `if` statement inside the
   function. Therefore, the "level" corresponding to that function
-  should be zero, both on the opening and closing of the function.
+  should be zero both on the opening and closing of the function.
 
 ##  Examples:
 
@@ -49,7 +49,7 @@ Consider trying to grab all functions defined in a file.
     Flag("end",      word_boundaries_left, word_boundaries_right)
   )]
 
-  L_o = get_between_flags_level(s_i, FS_outer, FS_inner)
+  L_o = get_level(s_i, FS_outer, FS_inner)
   print("\n -------------- results from complex example: \n")
   print(L_o[1])
   print("\n --------------\n")
