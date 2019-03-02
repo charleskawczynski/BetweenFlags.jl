@@ -1,6 +1,10 @@
 using Test
 using PerFlagFuncs
 
+@testset "split_by_consecutives edge case" begin
+  @test [1] == split_by_consecutives([1])[1]
+end
+
 @testset "merge_odd_even" begin
   a = [1, 3, 5]
   b = [2, 4, 6]
