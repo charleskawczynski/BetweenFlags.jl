@@ -1,20 +1,7 @@
 using Test
 using FeaturedFuncs
 
-function main()
-  path_separator = Sys.iswindows() ? "\\" : "/"
-  println("Testing ",split(@__FILE__, path_separator)[end],"...")
-
-  test_get_flat()
-  test_get_level_flat()
-  test_get_level_flat_practical()
-
-  test_get_level_practical_complex()
-
-  test_remove_between_flags()
-end
-
-function test_get_flat()
+@testset "Get flat" begin
   s_i1 = "Some text... {GRAB THIS}, some more text {GRAB THIS TOO}..."
   L_o1 = get_flat(s_i1, ["{"], ["}"])
   s_i2 = "Some text... {GRAB THIS}, some more text {GRAB THIS TOO}..."
@@ -23,20 +10,21 @@ function test_get_flat()
   L_o3 = get_flat(s_i3, ["{"], ["}", ")"])
   s_i4 = "Some text... {GRAB THIS), } some more text {GRAB THIS TOO}..."
   L_o4 = get_flat(s_i4, ["{"], ["}", ")"], false)
+  s_i5 = "Some text... GRAB NOTHING), some more text GRAB NOTHING..."
+  L_o5 = get_flat(s_i5, ["{"], ["}", ")"], false)
 
-  @testset begin
-      @test L_o1[1]=="{GRAB THIS}"
-      @test L_o2[1]=="GRAB THIS"
-      @test L_o3[1]=="{GRAB THIS)"
-      @test L_o4[1]=="GRAB THIS"
-      @test L_o1[2]=="{GRAB THIS TOO}"
-      @test L_o2[2]=="GRAB THIS TOO"
-      @test L_o3[2]=="{GRAB THIS TOO}"
-      @test L_o4[2]=="GRAB THIS TOO"
-  end
+  @test L_o1[1]=="{GRAB THIS}"
+  @test L_o2[1]=="GRAB THIS"
+  @test L_o3[1]=="{GRAB THIS)"
+  @test L_o4[1]=="GRAB THIS"
+  @test L_o1[2]=="{GRAB THIS TOO}"
+  @test L_o2[2]=="GRAB THIS TOO"
+  @test L_o3[2]=="{GRAB THIS TOO}"
+  @test L_o4[2]=="GRAB THIS TOO"
+  @test L_o5[1]==""
 end
 
-function test_get_level_flat()
+@testset "Get level flat" begin
   s_i1 = "Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}..."
   L_o1 = get_level_flat(s_i1, ["{"], ["}"])
   s_i2 = "Some text... {GRAB {THIS}}, some more text {GRAB THIS TOO}..."
@@ -45,20 +33,21 @@ function test_get_level_flat()
   L_o3 = get_level_flat(s_i3, ["{"], ["}", ")"])
   s_i4 = "Some text... {GRAB {THIS}), } some more text {GRAB THIS TOO}..."
   L_o4 = get_level_flat(s_i4, ["{"], ["}", ")"], false)
+  s_i5 = "Some text... GRAB {NOTHING),  some more text GRAB NOTHING..."
+  L_o5 = get_level_flat(s_i5, ["{"], ["}"], false)
 
-  @testset begin
-      @test L_o1[1]=="{GRAB {THIS}}"
-      @test L_o2[1]=="GRAB {THIS}"
-      @test L_o3[1]=="{GRAB {THIS})"
-      @test L_o4[1]=="GRAB {THIS}"
-      @test L_o1[2]=="{GRAB THIS TOO}"
-      @test L_o2[2]=="GRAB THIS TOO"
-      @test L_o3[2]=="{GRAB THIS TOO}"
-      @test L_o4[2]=="GRAB THIS TOO"
-  end
+  @test L_o1[1]=="{GRAB {THIS}}"
+  @test L_o2[1]=="GRAB {THIS}"
+  @test L_o3[1]=="{GRAB {THIS})"
+  @test L_o4[1]=="GRAB {THIS}"
+  @test L_o1[2]=="{GRAB THIS TOO}"
+  @test L_o2[2]=="GRAB THIS TOO"
+  @test L_o3[2]=="{GRAB THIS TOO}"
+  @test L_o4[2]=="GRAB THIS TOO"
+  @test L_o5[1]==""
 end
 
-function test_get_level_flat_practical()
+@testset "Get level flat practical" begin
   s_i = ""
   s_i = string(s_i, "\n", "Some text")
   s_i = string(s_i, "\n", "function myfunc()")
@@ -84,12 +73,10 @@ function test_get_level_flat_practical()
   s_o = string(s_o, "\n", "  more stuff")
   s_o = string(s_o, "\n", "end")
 
-  @testset begin
-      @test L_o[1]==s_o
-  end
+  @test L_o[1]==s_o
 end
 
-function test_get_level_practical_complex()
+@testset "Get level complex" begin
   s_i = ""
   s_i = string(s_i, "\n", "Some text")
   s_i = string(s_i, "\n", "if something")
@@ -147,12 +134,10 @@ function test_get_level_practical_complex()
   s_o = string(s_o, "\n", "    more stuff")
   s_o = string(s_o, "\n", "  end\n") # The \n is due to the right word boundary of the "end"
 
-  @testset begin
-      @test L_o[1]==s_o
-  end
+  @test L_o[1]==s_o
 end
 
-function test_remove_between_flags()
+@testset "Remove flat" begin
   s_i1 = "Here is some text, and {THIS SHOULD BE REMOVED}, FeaturedFuncs offers a simple interface..."
   s_o1 = remove_flat(s_i1, ["{"], ["}"])
   s_i2 = "Here is some text, and {THIS SHOULD BE REMOVED}, FeaturedFuncs offers a simple interface..."
@@ -160,14 +145,13 @@ function test_remove_between_flags()
   s_i3 = "Here is some text, and {THIS SHOULD BE REMOVED), FeaturedFuncs} offers a simple interface..."
   s_o3 = remove_flat(s_i3, ["{"], ["}", ")"])
   s_i4 = "Here is some text, and {THIS SHOULD BE REMOVED), FeaturedFuncs} offers a simple interface..."
-  s_o4 = remove_flat(s_i3, ["{"], ["}", ")"], false)
+  s_o4 = remove_flat(s_i4, ["{"], ["}", ")"], false)
+  s_i5 = "Here is some text, and THIS SHOULD REMAIN, FeaturedFuncs} offers a simple interface..."
+  s_o5 = remove_flat(s_i5, ["{"], ["}"], false)
 
-  @testset begin
-      @test s_o1=="Here is some text, and , FeaturedFuncs offers a simple interface..."
-      @test s_o2=="Here is some text, and {}, FeaturedFuncs offers a simple interface..."
-      @test s_o3=="Here is some text, and , FeaturedFuncs} offers a simple interface..."
-      @test s_o4=="Here is some text, and {), FeaturedFuncs} offers a simple interface..."
-  end
+  @test s_o1=="Here is some text, and , FeaturedFuncs offers a simple interface..."
+  @test s_o2=="Here is some text, and {}, FeaturedFuncs offers a simple interface..."
+  @test s_o3=="Here is some text, and , FeaturedFuncs} offers a simple interface..."
+  @test s_o4=="Here is some text, and {), FeaturedFuncs} offers a simple interface..."
+  @test s_o5=="Here is some text, and THIS SHOULD REMAIN, FeaturedFuncs} offers a simple interface..."
 end
-
-main()

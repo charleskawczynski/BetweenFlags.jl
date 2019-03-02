@@ -46,7 +46,7 @@ function get_flat(s::String,
   sort!(L_start)
   sort!(L_stop)
   if L_start==[] || L_stop==[]
-    return L
+    return Vector{String}([""])
   end
   (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop)
   for (i_start, i_stop) in zip(L_start, L_stop)
@@ -92,7 +92,7 @@ function get_level_flat(s::String,
   L_start = unique(L_start)
   L_stop = unique(L_stop)
   if L_start==[] || L_stop==[]
-    return L
+    return Vector{String}([""])
   end
   sort!(L_start)
   sort!(L_stop)
@@ -139,7 +139,7 @@ function get_level(s::String,
   L_start = unique(L_start)
   L_stop = unique(L_stop)
   if L_start==[] || L_stop==[]
-    return L
+    return Vector{String}([""])
   end
   sort!(L_start)
   sort!(L_stop)
