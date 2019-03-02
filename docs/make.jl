@@ -9,7 +9,6 @@ makedocs(
   strict = false,
   format = Documenter.HTML(
     prettyurls = get(ENV, "CI", nothing) == "true",
-    # prettyurls = !("local" in ARGS),
     canonical = "https://charleskawczynski.github.io/BetweenFlags.jl/stable/",
   ),
   clean = false,
