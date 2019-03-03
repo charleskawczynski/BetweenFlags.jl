@@ -13,13 +13,11 @@ function split_by_consecutives(A::Vector{Int})
     N_groups = count(map(x->x==1, sig))+1
     A_sub = Vector{Int}()
     A_split = Vector{Vector{Int}}([])
-    k = 1
     for (a, s) in zip(A, sig)
       push!(A_sub, a)
       if !(s==1)
         push!(A_split, A_sub)
         A_sub = Vector{Int}([])
-        k += 1
       end
       if a==A[N] && !(s==1)==false
         push!(A_split, A_sub)
