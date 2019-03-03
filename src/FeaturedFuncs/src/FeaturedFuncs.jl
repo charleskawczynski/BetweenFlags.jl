@@ -169,12 +169,13 @@ the string, `s`, in `get_level` does not change, whereas it does in
 by the number of removed characters in the correct location, or the
 entire function must be called recursively. Alternatively, the
 strings/flags can be removed in reverse order, preserving the output
-string, which is what is done here.
+string, which is what is done here. In addition, the return type of
+`remove_flat` is a String.
 """
 function remove_flat(s::String,
                      flags_start::Vector{String},
                      flags_stop::Vector{String},
-                     inclusive::Bool = true)
+                     inclusive::Bool = true)::String
   if !get_remaining_flags(s, flags_start, flags_stop)
     return s
   end
