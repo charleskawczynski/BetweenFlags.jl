@@ -168,7 +168,7 @@ function get_remaining_flags(s::String,
                              flags_stop::Vector{String})::Bool
   same_flags = all([x==y for x in flags_start for y in flags_stop])
   if same_flags
-    remaining_flags = any([y in s for y in flags_start]) && any([y in s for y in flags_stop])
+    remaining_flags = any([occursin(y, s) for y in flags_start]) && any([occursin(y, s) for y in flags_stop])
   else
     c_start = sum([count_flags(s, y) for y in flags_start])
     c_stop  = sum([count_flags(s, y) for y in flags_stop])

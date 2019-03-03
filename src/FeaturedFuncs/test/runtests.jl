@@ -156,10 +156,16 @@ end
   s_o4 = remove_flat(s_i4, ["{"], ["}", ")"], false)
   s_i5 = "Here is some text, and THIS SHOULD REMAIN, FeaturedFuncs} offers a simple interface..."
   s_o5 = remove_flat(s_i5, ["{"], ["}"], false)
+  s_i6 = "Here is some text, and THIS SHOULD REMAIN, FeaturedFuncs| offers a simple interface..."
+  s_o6 = remove_flat(s_i6, ["|"], ["|"], false)
+  s_i7 = "Here is some text, and |THIS SHOULD BE REMOVED|, FeaturedFuncs offers a simple interface..."
+  s_o7 = remove_flat(s_i7, ["|"], ["|"], false)
 
   @test s_o1=="Here is some text, and , FeaturedFuncs offers a simple interface..."
   @test s_o2=="Here is some text, and {}, FeaturedFuncs offers a simple interface..."
   @test s_o3=="Here is some text, and , FeaturedFuncs} offers a simple interface..."
   @test s_o4=="Here is some text, and {), FeaturedFuncs} offers a simple interface..."
   @test s_o5=="Here is some text, and THIS SHOULD REMAIN, FeaturedFuncs} offers a simple interface..."
+  @test s_o6=="Here is some text, and THIS SHOULD REMAIN, FeaturedFuncs| offers a simple interface..."
+  @test s_o7=="Here is some text, and ||, FeaturedFuncs offers a simple interface..."
 end
