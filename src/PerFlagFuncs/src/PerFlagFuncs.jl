@@ -97,20 +97,22 @@ function get_alternating_consecutive_vector(A::Vector{Int64},
     for (i, a) in enumerate(A)
       found = false
       for (j, b) in enumerate(B_available)
-        start_match = level_outer[a]==1 && level_outer[a-1]==0
-        stop_match  = level_outer[b]==1 && level_outer[b+1]==0
-        cond_outer = level_outer_given ? start_match && stop_match : true
-        cond_total = level_total[a]==level_total[b]
-        cond_i1 = (b > a)
-        cond_i2 = ( true || a == A[1] )
-        cond_incr = cond_i1 && cond_i2
-        cond = cond_incr && cond_total && cond_outer && !found
-        if cond
-          push!(L, a)
-          push!(L, b)
-          B_available = [x for x in B_available if x > b_previous]
-          b_previous = b
-          found = true
+        if !found
+          start_match = level_outer[a]==1 && level_outer[a-1]==0
+          stop_match  = level_outer[b]==1 && level_outer[b+1]==0
+          cond_outer = level_outer_given ? start_match && stop_match : true
+          cond_total = level_total[a]==level_total[b]
+          cond_i1 = (b > a)
+          cond_i2 = ( true || a == A[1] )
+          cond_incr = cond_i1 && cond_i2
+          cond = cond_incr && cond_total && cond_outer
+          if cond
+            push!(L, a)
+            push!(L, b)
+            filter!(x -> x > b_previous, B_available)
+            b_previous = b
+            found = true
+          end
         end
       end
     end
