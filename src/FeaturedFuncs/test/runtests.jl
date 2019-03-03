@@ -135,6 +135,14 @@ end
   s_o = string(s_o, "\n", "  end\n") # The \n is due to the right word boundary of the "end"
 
   @test L_o[1]==s_o
+
+  # Edge case (no flags in string):
+  s_i = ""
+  s_i = string(s_i, "\n", "Some text")
+  s_i = string(s_i, "\n", "more text")
+  L_o = get_level(s_i, FS_outer, FS_inner)
+  s_o = ""
+  @test L_o[1]==s_o
 end
 
 @testset "Remove flat" begin
