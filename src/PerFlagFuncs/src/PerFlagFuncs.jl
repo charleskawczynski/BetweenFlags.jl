@@ -70,8 +70,8 @@ end
 
 function get_alternating_consecutive_vector(A::Vector{Int64},
                                             B::Vector{Int64},
-                                            level_total=nothing,
-                                            level_outer=nothing,
+                                            level_total_in=nothing,
+                                            level_outer_in=nothing,
                                             s=nothing)
   e = Vector{Int64}(undef, 0)
   (C, D) = Tuple([e, e])
@@ -82,14 +82,9 @@ function get_alternating_consecutive_vector(A::Vector{Int64},
     return (C, D)
   end
   N_AB = max(A..., B...)
-  level_outer_given = !(level_outer == nothing)
   N_s = s == nothing ? N_AB : length(s)
-  if level_total == nothing
-    level_total = zeros(N_s)
-  end
-  if !level_outer_given
-    level_outer = zeros(N_s)
-  end
+  level_outer = level_outer_in==nothing ? zeros(N_s) : level_outer_in
+  level_total = level_total_in==nothing ? zeros(N_s) : level_total_in
   L = Vector{Int64}(undef, 0)
   B_available = B
   if length(A) > 0 && length(B) > 0
@@ -100,7 +95,7 @@ function get_alternating_consecutive_vector(A::Vector{Int64},
         if !found
           start_match = level_outer[a]==1 && level_outer[a-1]==0
           stop_match  = level_outer[b]==1 && level_outer[b+1]==0
-          cond_outer = level_outer_given ? start_match && stop_match : true
+          cond_outer = level_outer_in == nothing ? true : start_match && stop_match
           cond_total = level_total[a]==level_total[b]
           cond_i1 = (b > a)
           cond_i2 = ( true || a == A[1] )
