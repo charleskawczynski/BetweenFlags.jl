@@ -157,10 +157,9 @@ end
 """
 ```
 remove_flat(s::String,
-                     flags_start::Vector{String},
-                     flags_stop::Vector{String},
-                     inclusive::Bool = true,
-                     reverse_order::Bool = false)
+            flags_start::Vector{String},
+            flags_stop::Vector{String},
+            inclusive::Bool = true)
 ```
 Removes text between flags.
 
@@ -175,8 +174,7 @@ string, which is what is done here.
 function remove_flat(s::String,
                      flags_start::Vector{String},
                      flags_stop::Vector{String},
-                     inclusive::Bool = true,
-                     reverse_order::Bool = false)
+                     inclusive::Bool = true)
   if !get_remaining_flags(s, flags_start, flags_stop)
     return s
   end
