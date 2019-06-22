@@ -1,7 +1,7 @@
 # Base.HOME_PROJECT[] = abspath(Base.HOME_PROJECT[]) # JuliaLang/julia/pull/28625
 
 push!(LOAD_PATH, "../")
-using Documenter, BetweenFlags, UtilityFuncs, PerFlagFuncs, FeaturedFuncs
+using Documenter, BetweenFlags
 
 makedocs(
   sitename = "BetweenFlags.jl",
@@ -12,7 +12,7 @@ makedocs(
     canonical = "https://charleskawczynski.github.io/BetweenFlags.jl/stable/",
   ),
   clean = false,
-  modules = [Documenter, BetweenFlags, UtilityFuncs, PerFlagFuncs, FeaturedFuncs],
+  modules = [Documenter, BetweenFlags],
   pages = Any[
   "Home" => "index.md",
   "Functions" => Any[
