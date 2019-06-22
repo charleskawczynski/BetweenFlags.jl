@@ -1,5 +1,5 @@
 using Test
-using PerFlagFuncs
+using BetweenFlags.PerFlagFuncs
 
 @testset "split_by_consecutives edge case" begin
   @test [1] == split_by_consecutives([1])[1]

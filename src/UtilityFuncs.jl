@@ -1,6 +1,6 @@
 module UtilityFuncs
 
-using PerFlagFuncs
+using ..PerFlagFuncs
 
 export Flag
 export FlagSet

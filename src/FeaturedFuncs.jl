@@ -1,7 +1,7 @@
 module FeaturedFuncs
 
-using PerFlagFuncs
-using UtilityFuncs
+using ..PerFlagFuncs
+using ..UtilityFuncs
 
 export Flag
 export FlagSet

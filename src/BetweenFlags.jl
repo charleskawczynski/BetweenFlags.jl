@@ -1,8 +1,8 @@
 module BetweenFlags
 
-using PerFlagFuncs
-using UtilityFuncs
-using FeaturedFuncs
+include("PerFlagFuncs.jl")
+include("UtilityFuncs.jl")
+include("FeaturedFuncs.jl")
 
 export Flag
 export FlagSet

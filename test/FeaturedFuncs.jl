@@ -1,5 +1,5 @@
 using Test
-using FeaturedFuncs
+using BetweenFlags.FeaturedFuncs
 
 @testset "Get flat" begin
   s_i1 = "Some text... {GRAB THIS}, some more text {GRAB THIS TOO}..."
