@@ -179,11 +179,16 @@ function remove_flat(s::String,
   if !get_remaining_flags(s, flags_start, flags_stop)
     return s
   end
+  same_flags = all([x==y for x in flags_start for y in flags_stop])
   L_start = [m for flag_start in flags_start for m in find_next_iter(s, flag_start)]
   L_stop  = [m for flag_stop  in flags_stop  for m in find_next_iter(s, flag_stop )]
   sort!(L_start)
   sort!(L_stop)
   (L_start, L_stop) = get_alternating_consecutive_vector(L_start, L_stop)
+  if same_flags
+    L_start = L_start[1:2:end]
+    L_stop = L_stop[1:2:end]
+  end
   s_new = s
   for (i_start, i_stop) in zip(reverse(L_start), reverse(L_stop))
     b, m, a = substring_decomp_by_index(s_new, i_start, i_stop, flags_start, flags_stop, inclusive)

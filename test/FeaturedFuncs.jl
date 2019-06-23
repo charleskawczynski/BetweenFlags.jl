@@ -160,6 +160,12 @@ end
   s_o6 = remove_flat(s_i6, ["|"], ["|"], false)
   s_i7 = "Here is some text, and |THIS SHOULD BE REMOVED|, FeaturedFuncs offers a simple interface..."
   s_o7 = remove_flat(s_i7, ["|"], ["|"], false)
+  s_doc = "\"\"\""
+  s_i8 = "Here is some text-"*s_doc*" docs... "*s_doc*", and-"*s_doc*"more docs"*s_doc*", FeaturedFuncs offers a simple interface..."
+  s_o8 = remove_flat(s_i8, [s_doc], [s_doc], true)
+  s_doc = "\"\"\""
+  s_i9 = "Here is some text-"*s_doc*" docs... "*s_doc*", and-"*s_doc*"more docs"*s_doc*", and "*s_doc*"more docs"*s_doc*", FeaturedFuncs offers a simple interface..."
+  s_o9 = remove_flat(s_i9, [s_doc], [s_doc], true)
 
   @test s_o1=="Here is some text, and , FeaturedFuncs offers a simple interface..."
   @test s_o2=="Here is some text, and {}, FeaturedFuncs offers a simple interface..."
@@ -168,4 +174,6 @@ end
   @test s_o5=="Here is some text, and THIS SHOULD REMAIN, FeaturedFuncs} offers a simple interface..."
   @test s_o6=="Here is some text, and THIS SHOULD REMAIN, FeaturedFuncs| offers a simple interface..."
   @test s_o7=="Here is some text, and ||, FeaturedFuncs offers a simple interface..."
+  @test s_o8=="Here is some text-, and-, FeaturedFuncs offers a simple interface..."
+  @test s_o9=="Here is some text-, and-, and , FeaturedFuncs offers a simple interface..."
 end
