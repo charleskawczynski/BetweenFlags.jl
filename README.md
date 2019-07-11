@@ -22,7 +22,7 @@ A set of string processing utility functions that finds/removes text between giv
 
 To install, use
 
-`julia -e 'using Pkg; Pkg.add("https://github.com/charleskawczynski/BetweenFlags.jl")'`
+`julia ] add BetweenFlags`
 
 # Featured functions
 
