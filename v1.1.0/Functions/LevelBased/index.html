@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Level-based functions · BetweenFlags.jl</title><link rel="canonical" href="https://charleskawczynski.github.io/BetweenFlags.jl/stable/Functions/LevelBased/index.html"/><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="BetweenFlags.jl logo"/></a><h1>BetweenFlags.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Functions</span><ul><li><a class="toctext" href="../Greedy/">Greedy functions</a></li><li class="current"><a class="toctext" href>Level-based functions</a><ul class="internal"><li><a class="toctext" href="#Examples:-1">Examples:</a></li></ul></li></ul></li><li><a class="toctext" href="../../api/">API</a></li></ul></nav><article id="docs"><header><nav><ul><li>Functions</li><li><a href>Level-based functions</a></li></ul><a class="edit-page" href="https://github.com/charleskawczynski/BetweenFlags.jl/blob/master/docs/src/Functions/LevelBased.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Level-based functions</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Level-based-functions-1" href="#Level-based-functions-1">Level-based functions</a></h1><p>The level-based version of BetweenFlags is needed for things   like finding functions, where then &quot;end&quot; of a <code>function</code> cannot   be confused with the &quot;end&quot; of an <code>if</code> statement inside the   function. Therefore, the &quot;level&quot; corresponding to that function   should be zero both on the opening and closing of the function.</p><h2><a class="nav-anchor" id="Examples:-1" href="#Examples:-1">Examples:</a></h2><p>Consider trying to grab all functions defined in a file.</p><pre><code class="language-none">  s_i = &quot;&quot;
+  s_i = string(s_i, &quot;\n&quot;, &quot;Some text&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;if something&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;  function myfunc()&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;    more stuff&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;    if something&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;      print(&#39;something&#39;)&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;    else&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;      print(&#39;not something&#39;)&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;    end&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;    for something&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;      print(&#39;something&#39;)&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;    else&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;      print(&#39;not something&#39;)&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;    end&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;    more stuff&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;  end&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;end&quot;)
+  s_i = string(s_i, &quot;\n&quot;, &quot;more text&quot;)
+
+  word_boundaries_left = [&quot;\n&quot;, &quot; &quot;, &quot;;&quot;]
+  word_boundaries_right = [&quot;\n&quot;, &quot; &quot;, &quot;;&quot;]
+  word_boundaries_right_if = [&quot; &quot;, &quot;;&quot;]
+
+  FS_outer = FlagSet(
+    Flag(&quot;function&quot;, word_boundaries_left, word_boundaries_right),
+    Flag(&quot;end&quot;,      word_boundaries_left, word_boundaries_right)
+  )
+
+  FS_inner = [
+  FlagSet(
+    Flag(&quot;if&quot;,       word_boundaries_left, word_boundaries_right_if),
+    Flag(&quot;end&quot;,      word_boundaries_left, word_boundaries_right)
+  ),
+  FlagSet(
+    Flag(&quot;for&quot;,      word_boundaries_left, word_boundaries_right),
+    Flag(&quot;end&quot;,      word_boundaries_left, word_boundaries_right)
+  )]
+
+  L_o = get_level(s_i, FS_outer, FS_inner)
+  print(&quot;\n -------------- results from complex example: \n&quot;)
+  print(L_o[1])
+  print(&quot;\n --------------\n&quot;)
+
+ -------------- results from complex example:
+ function myfunc()
+    more stuff
+    if something
+      print(&#39;something&#39;)
+    else
+      print(&#39;not something&#39;)
+    end
+    for something
+      print(&#39;something&#39;)
+    else
+      print(&#39;not something&#39;)
+    end
+    more stuff
+  end
+
+ --------------
+</code></pre><footer><hr/><a class="previous" href="../Greedy/"><span class="direction">Previous</span><span class="title">Greedy functions</span></a><a class="next" href="../../api/"><span class="direction">Next</span><span class="title">API</span></a></footer></article></body></html>
