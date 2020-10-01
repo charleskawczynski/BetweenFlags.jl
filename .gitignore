@@ -1,9 +1,11 @@
-src/*.png
+!docs/src/assets/*.png
+*.png
 *.bat
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
 *.DS_Store
+code_samples/*
 deps/deps.jl
 docs/build/
 docs/site/

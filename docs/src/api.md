@@ -6,11 +6,9 @@ CurrentModule = BetweenFlags
 
 ```@docs
 BetweenFlags.Flag
-BetweenFlags.FlagSet
+BetweenFlags.FlagPair
 ```
 
 ```@docs
-BetweenFlags.get_flat
-BetweenFlags.get_level_flat
-BetweenFlags.get_level
+BetweenFlags.tokenize
 ```
