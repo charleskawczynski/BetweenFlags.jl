@@ -19,7 +19,6 @@ text = "Foo, {bar {foobar} baz}, foobaz...";
 token_stream = TokenStream(text, flag_set);
 
 token_stream("{-}")
-"{bar {foobar}"
 ```
 
 ## Scope-aware
@@ -39,5 +38,4 @@ text = "Foo, {bar {foobar} baz}, foobaz...";
 token_stream = TokenStream(text, flag_set);
 
 token_stream("{-}")
-"{bar {foobar} baz}"
 ```
