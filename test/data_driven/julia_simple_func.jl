@@ -1,6 +1,5 @@
 using Test
 using BetweenFlags
-const BF = BetweenFlags
 
 code_dir = joinpath(dat_dir, "julia", "simple_func")
 
@@ -35,13 +34,13 @@ end
     Flag("end",      ["\n","\r"], ["\n","\r"]; flag_type= StopType())
   )])
 
-  token_stream = BF.tokenize(code, flag_set)
+  token_stream = TokenStream(code, flag_set)
   export_results && export_plot(token_stream,code; path=code_dir)
 
   ####
   #### for-end
   ####
-  section = BF.get_string(code, token_stream, "for-end")
+  section = token_stream("for-end")
   section_expected = open(f->read(f, String), joinpath(code_dir, "expected_for.jl"))
 
   # TODO: account for return carriage
@@ -56,7 +55,7 @@ end
   ####
   #### if-end
   ####
-  section = BF.get_string(code, token_stream, "if-end")
+  section = token_stream("if-end")
   section_expected = open(f->read(f, String), joinpath(code_dir, "expected_if.jl"))
   # # TODO: account for return carriage
   @test post_process(section)==post_process(section_expected)

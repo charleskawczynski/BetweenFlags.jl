@@ -10,15 +10,15 @@ using BetweenFlags
 flag_set = FlagSet([
             FlagPair(
                 Flag("{", [""], [""], flag_type=StartType()),
-                Flag("}", [""], [""])
+                Flag("}", [""], [""], flag_type=GreedyType())
             )
           ]);
 
 text = "Foo, {bar {foobar} baz}, foobaz...";
 
-token_stream = BetweenFlags.tokenize(text, flag_set);
+token_stream = TokenStream(text, flag_set);
 
-BetweenFlags.get_string(text, token_stream, "{-}")
+token_stream("{-}")
 "{bar {foobar}"
 ```
 
@@ -36,8 +36,8 @@ flag_set = FlagSet([
 
 text = "Foo, {bar {foobar} baz}, foobaz...";
 
-token_stream = BetweenFlags.tokenize(text, flag_set);
+token_stream = TokenStream(text, flag_set);
 
-BetweenFlags.get_string(text, token_stream, "{-}")
+token_stream("{-}")
 "{bar {foobar} baz}"
 ```

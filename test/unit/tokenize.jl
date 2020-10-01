@@ -1,7 +1,6 @@
 using Test
 using BetweenFlags
 import BetweenFlags
-const BF = BetweenFlags
 
 @testset "Greedy - length(flag)>length(word bc)" begin
   flag_set = FlagSet([
@@ -12,29 +11,41 @@ const BF = BetweenFlags
   ])
 
   text = "Foo, bar..."
-  token_stream = BF.tokenize(text, flag_set)
-  @test BF.get_string(text, token_stream, "{-}") == ""
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("{-}") == ""
 
   text = "Foo, {}, bar..."
-  token_stream = BF.tokenize(text, flag_set)
-  @test BF.get_string(text, token_stream, "{-}") == "{}"
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("{-}") == "{}"
 
   text = "Foo, {a}{b}, bar..."
-  token_stream = BF.tokenize(text, flag_set)
-  @test BF.get_string(text, token_stream, "{-}") == "{a}{b}"
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("{-}") == "{a}{b}"
 
   text = "Foo, {a} {b}, bar..."
-  token_stream = BF.tokenize(text, flag_set)
+  token_stream = TokenStream(text, flag_set)
   # Consecutive scopes are concatenated (in `get_string`):
-  @test BF.get_string(text, token_stream, "{-}") == "{a}{b}"
+  @test token_stream("{-}") == "{a}{b}"
 
   text = "Foo, {bar}, foobar..."
-  token_stream = BF.tokenize(text, flag_set)
-  @test BF.get_string(text, token_stream, "{-}") == "{bar}"
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("{-}") == "{bar}"
 
   text = "Foo, {{bar}}, foobar..."
-  token_stream = BF.tokenize(text, flag_set)
-  @test BF.get_string(text, token_stream, "{-}") == "{{bar}"
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("{-}") == "{{bar}"
+end
+
+@testset "Scope - flag subsets" begin
+  flag_set = FlagSet([
+      FlagPair(
+          Flag("do", [""], [""];flag_type= StartType()),
+          Flag("end do", [""], [""])
+      )
+  ])
+  text = "Foo, do bar; foo end do, foobar..."
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("do-end do") == "do bar; foo end do"
 end
 
 @testset "Scope - nested" begin
@@ -46,16 +57,16 @@ end
   ])
 
   text = "Foo, {bar}, foobar..."
-  token_stream = BF.tokenize(text, flag_set)
-  @test BF.get_string(text, token_stream, "{-}") == "{bar}"
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("{-}") == "{bar}"
 
   text = "Foo, {{bar}}, foobar..."
-  token_stream = BF.tokenize(text, flag_set)
-  @test BF.get_string(text, token_stream, "{-}") == "{{bar}}"
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("{-}") == "{{bar}}"
 
   text = "Foo, {{bar}{baz}}, foobar..."
-  token_stream = BF.tokenize(text, flag_set)
-  @test BF.get_string(text, token_stream, "{-}") == "{{bar}{baz}}"
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("{-}") == "{{bar}{baz}}"
 
 end
 
@@ -68,8 +79,8 @@ end
   ])
 
   text = "foo STA_WBC_LABC_ABC_LSTA_WBC_R bar STO_WBC_LABC_ABC_RSTO_WBC_R foobar"
-  token_stream = BF.tokenize(text, flag_set)
-  @test BF.get_string(text, token_stream, "ABC_ABC_L-ABC_ABC_R") == "STA_WBC_LABC_ABC_LSTA_WBC_R bar STO_WBC_LABC_ABC_RSTO_WBC_R"
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("ABC_ABC_L-ABC_ABC_R") == "STA_WBC_LABC_ABC_LSTA_WBC_R bar STO_WBC_LABC_ABC_RSTO_WBC_R"
 
 end
 
@@ -82,8 +93,8 @@ end
   ])
 
   text = "foo XYZ_XYZ_STA_WBC_LABC_LXYZ_XYZ_STA_WBC_R bar XYZ_XYZ_STO_WBC_LABC_RXYZ_XYZ_STO_WBC_R foobar"
-  token_stream = BF.tokenize(text, flag_set)
-  @test BF.get_string(text, token_stream, "ABC_L-ABC_R") == "XYZ_XYZ_STA_WBC_LABC_LXYZ_XYZ_STA_WBC_R bar XYZ_XYZ_STO_WBC_LABC_RXYZ_XYZ_STO_WBC_R"
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("ABC_L-ABC_R") == "XYZ_XYZ_STA_WBC_LABC_LXYZ_XYZ_STA_WBC_R bar XYZ_XYZ_STO_WBC_LABC_RXYZ_XYZ_STO_WBC_R"
 
 end
 
@@ -140,9 +151,9 @@ end
     Flag("end",      ["\n","\r", " "], ["\n","\r"];flag_type= StopType())
   )])
 
-  token_stream = BF.tokenize(text, flag_set)
+  token_stream = TokenStream(text, flag_set)
 
-  @test BF.get_string(text, token_stream, "if-end") == text_expected
+  @test token_stream("if-end") == text_expected
   export_results && export_plot(token_stream, text; path=".")
 
 end
