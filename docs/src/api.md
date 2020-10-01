@@ -7,8 +7,5 @@ CurrentModule = BetweenFlags
 ```@docs
 BetweenFlags.Flag
 BetweenFlags.FlagPair
-```
-
-```@docs
-BetweenFlags.tokenize
+BetweenFlags.TokenStream
 ```

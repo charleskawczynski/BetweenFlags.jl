@@ -4,6 +4,7 @@
 
 export Flag, FlagPair, FlagSet
 export StartType, GreedyType, StopType
+export TokenStream
 
 abstract type AbstractFlagType end
 struct StartType <: AbstractFlagType end
@@ -116,6 +117,19 @@ struct FlagSet{FP}
   flag_pairs::Vector{FP}
 end
 
-function (flag_set::FlagSet)(key::String, trigger)
-  flag_pairs.stop.trigger
+"""
+    TokenStream
+
+A token stream, containing
+ - `flag_set` a `FlagSet`
+ - `code` a string of code to be tokenized
+ - `token_stream` a token stream (dict)
+    whose keys are the flag IDs,
+    and whose values are vectors of `Int`s
+    indicating the nestedness of the flag.
+"""
+struct TokenStream{FS,C,TS}
+  flag_set::FS
+  code::C
+  token_stream::TS
 end
