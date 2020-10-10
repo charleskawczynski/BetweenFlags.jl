@@ -8,9 +8,9 @@ BetweenFlags.jl is a text-grepping tool that can be used with greedy or scope-aw
 using BetweenFlags
 
 flag_set = FlagSet([
-            FlagPair(
-                Flag("{", [""], [""], flag_type=StartType()),
-                Flag("}", [""], [""], flag_type=GreedyType())
+            FlagPair{GreedyType}(
+                StartFlag("{", [""], [""]),
+                StopFlag("}", [""], [""])
             )
           ]);
 
@@ -27,9 +27,9 @@ token_stream("{-}")
 using BetweenFlags
 
 flag_set = FlagSet([
-            FlagPair(
-                Flag("{", [""], [""], flag_type=StartType()),
-                Flag("}", [""], [""], flag_type=StopType())
+            FlagPair{ScopeType}(
+                StartFlag("{", [""], [""]),
+                StopFlag("}", [""], [""])
             )
           ]);
 

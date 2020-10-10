@@ -2,9 +2,9 @@ using Test
 using BetweenFlags
 
 @testset "Flag pair" begin
-    flag1 = Flag("flag1"; flag_type=StartType())
-    flag2 = Flag("flag2")
-    flag_set = FlagPair(
+    flag1 = StartFlag("flag1")
+    flag2 = StopFlag("flag2")
+    flag_set = FlagPair{GreedyType}(
         flag1,
         flag2,
     )

@@ -5,7 +5,8 @@ CurrentModule = BetweenFlags
 ```
 
 ```@docs
-BetweenFlags.Flag
+BetweenFlags.StartFlag
+BetweenFlags.StopFlag
 BetweenFlags.FlagPair
 BetweenFlags.TokenStream
 ```

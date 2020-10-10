@@ -5,12 +5,30 @@
 debug() = false
 # export tokenize, get_string
 
-start_cond(flag_type) = flag_type isa StartType || flag_type isa GreedyType
-function stop_cond(flag_type, active_scope, flag)
+function start_cond(nt, active_scope)
   if isempty(active_scope)
-    return false
+    return nt.flag isa StartFlag
   else
-    return flag_type isa StopType || flag_type isa GreedyType
+    if grep_type(nt.fp) === GreedyType
+      return nt.flag isa StartFlag && last(active_scope) ≠ nt.ID
+    else
+      return nt.flag isa StartFlag
+    end
+  end
+end
+function stop_cond(nt, active_scope)
+  if grep_type(nt.fp) === GreedyType
+    if isempty(active_scope)
+      return false
+    else
+      return nt.trig in nt.fp.stop.trigger
+    end
+  else
+    if isempty(active_scope)
+      return false
+    else
+      return nt.flag isa StopFlag
+    end
   end
 end
 
@@ -31,30 +49,29 @@ function TokenStream(
 
   @inbounds begin
     flag_pairs = flag_set.flag_pairs
-    greedy_config = any([
-      x.start.flag_type isa GreedyType ||
-      x.stop.flag_type isa GreedyType
-      for x in flag_pairs for
-        trig in [x.start.trigger...,x.stop.trigger...]])
+
+    all_flags = []
+    for x in flag_pairs
+      for trig in (x.start.trigger...,)
+        push!(all_flags, (fp=x, trig=trig, flag=x.start, ID=x.ID))
+      end
+      for trig in (x.stop.trigger...,)
+        push!(all_flags, (fp=x, trig=trig, flag=x.stop, ID=x.ID))
+      end
+    end
+    greedy_config = any([grep_type(nt.fp) isa GreedyType for nt in all_flags])
 
     # Convenience maps:
-    trig2ID = Dict(trig => x.ID for x in flag_pairs for trig in [x.start.trigger...,x.stop.trigger...])
-    all_flags = [(x.start, x.stop) for x in flag_pairs]
-    all_flags = collect(Iterators.flatten(all_flags))
-    all_flags = [zip(x.trigger,ntuple(i->x.flag_type, length(x.trigger))) for x in all_flags]
-
-    all_triggers = collect(Iterators.flatten(all_flags))
+    trig2ID = Dict(nt.trig => nt.ID for nt in all_flags)
     ei = eachindex(code)
     ei_end = last(ei)
     token_stream = Dict()
-    @inbounds for (trig,ft) in all_triggers
-      token_stream[trig2ID[trig]] = [0 for i in ei]
+    @inbounds for nt in all_flags
+      token_stream[trig2ID[nt.trig]] = [0 for i in ei]
     end
 
-    trigs       = [trig for (trig,ft) in all_triggers]
-    flag_types  = [ft for (trig,ft) in all_triggers]
-    lenflags = length(trigs)
-    flens = length.(trigs)
+    lenflags = length(all_flags)
+    flens = length.([nt.trig for nt in all_flags])
     active_scope = []
     i = first(ei)
     i_max = max(ei...)
@@ -64,31 +81,41 @@ function TokenStream(
       code_substrings = [code[i:j] for j in safe_end]
       debug() && @show code_substrings
       # Filter non-equal lengths:
-      data         = [(trig,code_substr,ft) for (trig,code_substr,ft) in zip(trigs,code_substrings,flag_types) if length(trig)==length(code_substr)]
+      data = [(nt,code_substr) for
+        (nt,code_substr) in
+        zip(all_flags,code_substrings)
+        if length(nt.trig)==length(code_substr)]
       # may be non-unique, greedy over start trigs
       # Three options:
       #  - 1) Close last active scope
       #  - 2) Open new scope
       #  - 3) Do nothing (no string match)
-      for (trig,code_substr,ft) in data
+      for (nt,code_substr) in data
+        trig = nt.trig
         if trig==code_substr
+          debug() && println("*********** match")
           # Update token stream (option 1 or 2)
-          debug() && @show trig, ft
-          if stop_cond(ft, active_scope, trig2ID[trig])
+          debug() && @show nt.trig
+          debug() && @show nt.ID
+          debug() && @show grep_type(nt.fp)
+          debug() && @show nt.flag
+          debug() && @show nt.fp
+          debug() && @show active_scope
+          debug() && @show stop_cond(nt, active_scope)
+          debug() && @show start_cond(nt, active_scope)
+
+          if stop_cond(nt, active_scope)
             last_scope = last(active_scope)
             token_stream[last_scope][i+length(trig):end] .-= 1
-            if ft isa GreedyType
-              token_stream[last_scope][i+length(trig):end] .=
-                min.(token_stream[last_scope][i+length(trig):end], 0)
-            end
             pop!(active_scope)
-          elseif start_cond(ft)
+          elseif start_cond(nt, active_scope)
             token_stream[trig2ID[trig]][i:end] .+= 1
             push!(active_scope, trig2ID[trig])
           end
           # increment i to avoid double-counting
           # for variable flag lengths:
           i+=max(length(trig)-2, 0)
+          debug() && println("***********")
           break # leave for loop
         end
       end
