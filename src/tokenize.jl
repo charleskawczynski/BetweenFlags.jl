@@ -32,6 +32,16 @@ function stop_cond(nt, active_scope)
   end
 end
 
+function substr(s,i,j)
+  N = length(s)
+  i_safe = clamp(i, 1, N)
+  j_safe = clamp(j, 1, N)
+  @assert 0<i_safe<N+1
+  @assert 0<j_safe<N+1
+  @assert i_safe<=j_safe
+  return chop(s,head=i_safe-1,tail=N-j_safe)
+end
+
 """
     TokenStream(
         code::S,
@@ -78,7 +88,7 @@ function TokenStream(
     @inbounds for i_base in ei
       debug() && println("------------------- i = $(i)")
       safe_end = min.(i .+ flens .- 1, ntuple( _ -> ei_end, lenflags))
-      code_substrings = [code[i:j] for j in safe_end]
+      code_substrings = [substr(code, i, j) for j in safe_end]
       debug() && @show code_substrings
       # Filter non-equal lengths:
       data = [(nt,code_substr) for
@@ -145,6 +155,7 @@ A `code` substring whose `TokenStream`, for
 """
 function (ts::TokenStream)(flag_id, cond=x->x>=1)
   i_code = [i for i in 1:length(ts.code) if cond(ts.token_stream[flag_id][i])]
-  return ts.code[i_code]
+  # TODO: This is a hack, and very wasteful:
+  return join([substr(ts.code, i, i) for i in i_code])
 end
 
