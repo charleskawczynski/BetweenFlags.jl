@@ -1,73 +1,82 @@
 ####
-#### Flag
+#### Flags
 ####
 
-export Flag, FlagPair, FlagSet
-export StartType, GreedyType, StopType
+export StartFlag, StopFlag, FlagPair, FlagSet
+export GreedyType, ScopeType
 export TokenStream
 
-abstract type AbstractFlagType end
-struct StartType <: AbstractFlagType end
-struct GreedyType <: AbstractFlagType end
-struct StopType <: AbstractFlagType end
+abstract type AbstractGrepType end
+struct ScopeType <: AbstractGrepType end
+struct GreedyType <: AbstractGrepType end
+
+abstract type AbstractFlag{GT<:AbstractGrepType} end
 
 """
-    Flag(flag::String,
-         flag_boundaries_left::Vector{String},
-         flag_boundaries_right::Vector{String})
+    StartFlag(flag::String,
+              flag_boundaries_left::Vector{String},
+              flag_boundaries_right::Vector{String})
 
-A flag that BetweenFlags looks for to denote
-the start/stop position of a given scope.
-The flag boundaries need only be unique
-since every permutation of left and right
-flag boundaries are taken to determine scopes.
-
-```julia
-julia>
-using BetweenFlags
-# find: ["\\nfunction", " function", ";function"]
-start_flag = Flag("function",
-                  ["\\n", "\\s", ";"],
-                  ["\\n", "\\s"],
-                  StartType())
-# find: ["\\nend", " end", ";end"]
-stop_flag = Flag("end",
-                 ["\\n", "\\s", ";"],
-                 ["\\n", "\\s", ";"],
-                 StopType())
-```
+A "start" flag that BetweenFlags looks for to denote
+the start position of a given scope.
 """
-struct Flag{T}
-  flag :: String
-  flag_boundaries_left :: Vector{String}
-  flag_boundaries_right :: Vector{String}
-  trigger :: Vector{String}
-  flag_type::T
-  function Flag(
-    flag::S,
-    flag_boundaries_left=S[],
-    flag_boundaries_right=S[];
-    flag_type::T=GreedyType()
-    ) where {S<:AbstractString, T<:AbstractFlagType}
-    trigger = Vector{String}()
-    for left in flag_boundaries_left
-      for right in flag_boundaries_right
-        push!(trigger, string(left, flag, right))
-      end
+struct StartFlag{GT} <: AbstractFlag{GT}
+  flag::String
+  flag_boundaries_left::Vector{String}
+  flag_boundaries_right::Vector{String}
+  trigger::Vector{String}
+end
+function StartFlag(flag::S,
+  flag_boundaries_left=S[],
+  flag_boundaries_right=S[];
+  grep_type::AbstractGrepType=GreedyType()
+  ) where {S<:AbstractString, GT<:AbstractGrepType}
+  trigger = Vector{String}()
+  for left in flag_boundaries_left
+    for right in flag_boundaries_right
+      push!(trigger, string(left, flag, right))
     end
-    if isempty(trigger)
-      push!(trigger, flag)
-    end
-    return new{T}(flag,
-      flag_boundaries_left,
-      flag_boundaries_right,
-      trigger,
-      flag_type
-      )
   end
+  isempty(trigger) && push!(trigger, flag)
+  return StartFlag{typeof(grep_type)}(flag, flag_boundaries_left,
+        flag_boundaries_right, trigger)
 end
 
-flag_type(::Flag{T}) where T = T
+"""
+    StopFlag(flag::String,
+              flag_boundaries_left::Vector{String},
+              flag_boundaries_right::Vector{String})
+
+A "stop" flag that BetweenFlags looks for to denote
+the stop position of a given scope.
+"""
+struct StopFlag{GT} <: AbstractFlag{GT}
+  flag::String
+  flag_boundaries_left::Vector{String}
+  flag_boundaries_right::Vector{String}
+  trigger::Vector{String}
+end
+function StopFlag(flag::S,
+  flag_boundaries_left=S[],
+  flag_boundaries_right=S[];
+  grep_type::AbstractGrepType=GreedyType()
+  ) where {S<:AbstractString}
+  trigger = Vector{String}()
+  for left in flag_boundaries_left
+    for right in flag_boundaries_right
+      push!(trigger, string(left, flag, right))
+    end
+  end
+  isempty(trigger) && push!(trigger, flag)
+  return StopFlag{typeof(grep_type)}(flag, flag_boundaries_left,
+        flag_boundaries_right, trigger)
+end
+
+# TODO: resolve inconsistency between
+# grep_type of flag and flag pair, as
+# these are easily set different from
+# each other.
+grep_type(::AbstractFlag{T}) where T = T
 
 ####
 #### FlagPair
@@ -83,35 +92,30 @@ the substring of interest.
 julia>
 using BetweenFlags
 # find: ["\\nfunction", " function", ";function"]
-start_flag = Flag("function",
+start_flag = StartFlag("function",
                   ["\\n", "\\s", ";"],
-                  ["\\n", "\\s"],
-                  StartType())
+                  ["\\n", "\\s"])
 # find: ["\\nend", " end", ";end"]
-stop_flag = Flag("end",
+stop_flag = StopFlag("end",
                  ["\\n", "\\s", ";"],
-                 ["\\n", "\\s", ";"],
-                 StopType())
-flag_pair = FlagPair(start_flag, stop_flag)
+                 ["\\n", "\\s", ";"])
+flag_pair = FlagPair{ScopeType}(start_flag, stop_flag)
 ```
 """
-struct FlagPair{A,B}
-  start :: Flag{A}
-  stop :: Flag{B}
-  ID  :: String
-  function FlagPair(
-    start::TA,
-    stop::TB
-    ) where {TA<:Union{Flag{StartType}},
-             TB<:Union{Flag{StopType},Flag{GreedyType}}}
-  return new{
-  flag_type(start),
-  flag_type(stop)}(
-    start,
-    stop,
-    start.flag*"-"*stop.flag)
+struct FlagPair{FPT}
+  start::StartFlag
+  stop::StopFlag
+  ID::String
+  function FlagPair{FPT}(
+    start::StartFlag,
+    stop::StopFlag
+    ) where {FPT<:Union{ScopeType,GreedyType}}
+    return new{FPT}(start, stop, start.flag*"-"*stop.flag)
   end
 end
+FlagPair(start, stop) = FlagPair{GreedyType}(start, stop)
+
+grep_type(::FlagPair{T}) where T = T
 
 struct FlagSet{FP}
   flag_pairs::Vector{FP}

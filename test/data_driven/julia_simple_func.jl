@@ -21,17 +21,17 @@ end
   code = open(f->read(f, String), filename)
 
   flag_set = FlagSet([
-  FlagPair(
-    Flag("function", ["\n",""], [" "];flag_type= StartType()),
-    Flag("end",      ["\n","\r"], ["\n","\r"]; flag_type= StopType())
+  FlagPair{ScopeType}(
+    StartFlag("function", ["\n",""], [" "]),
+    StopFlag( "end",      ["\n","\r"], ["\n","\r"];)
   ),
-  FlagPair(
-    Flag("if",       ["\n"], [" "]; flag_type= StartType()),
-    Flag("end",      ["\n","\r"], ["\n","\r"]; flag_type= StopType())
+  FlagPair{ScopeType}(
+    StartFlag("if",       ["\n"], [" "]),
+    StopFlag( "end",      ["\n","\r"], ["\n","\r"])
   ),
-  FlagPair(
-    Flag("for",      ["\n"], [" "]; flag_type= StartType()),
-    Flag("end",      ["\n","\r"], ["\n","\r"]; flag_type= StopType())
+  FlagPair{ScopeType}(
+    StartFlag("for",      ["\n"], [" "]),
+    StopFlag( "end",      ["\n","\r"], ["\n","\r"])
   )])
 
   token_stream = TokenStream(code, flag_set)

@@ -4,9 +4,9 @@ import BetweenFlags
 
 @testset "Greedy - length(flag)>length(word bc)" begin
   flag_set = FlagSet([
-      FlagPair(
-          Flag("{", [""], [""];flag_type= StartType()),
-          Flag("}", [""], [""])
+      FlagPair{GreedyType}(
+          StartFlag("{", [""], [""]),
+          StopFlag( "}", [""], [""])
       )
   ])
 
@@ -31,16 +31,16 @@ import BetweenFlags
   token_stream = TokenStream(text, flag_set)
   @test token_stream("{-}") == "{bar}"
 
-  text = "Foo, {{bar}}, foobar..."
+  text = "Foo, {{foobar}}, foobaz..."
   token_stream = TokenStream(text, flag_set)
-  @test token_stream("{-}") == "{{bar}"
+  @test token_stream("{-}") == "{{foobar}"
 end
 
 @testset "Scope - flag subsets" begin
   flag_set = FlagSet([
-      FlagPair(
-          Flag("do", [""], [""];flag_type= StartType()),
-          Flag("end do", [""], [""])
+      FlagPair{ScopeType}(
+          StartFlag("do", [""], [""]),
+          StopFlag( "end do", [""], [""])
       )
   ])
   text = "Foo, do bar; foo end do, foobar..."
@@ -50,9 +50,9 @@ end
 
 @testset "Scope - nested" begin
   flag_set = FlagSet([
-      FlagPair(
-          Flag("{", [""], [""];flag_type= StartType()),
-          Flag("}", [""], [""];flag_type= StopType())
+      FlagPair{ScopeType}(
+          StartFlag("{", [""], [""]),
+          StopFlag( "}", [""], [""])
       )
   ])
 
@@ -72,9 +72,9 @@ end
 
 @testset "Greedy - length(flag)==length(word bc)" begin
   flag_set = FlagSet([
-      FlagPair(
-          Flag("ABC_ABC_L", ["STA_WBC_L"], ["STA_WBC_R"];flag_type= StartType()),
-          Flag("ABC_ABC_R", ["STO_WBC_L"], ["STO_WBC_R"])
+      FlagPair{GreedyType}(
+          StartFlag("ABC_ABC_L", ["STA_WBC_L"], ["STA_WBC_R"]),
+          StopFlag( "ABC_ABC_R", ["STO_WBC_L"], ["STO_WBC_R"])
       )
   ])
 
@@ -86,9 +86,9 @@ end
 
 @testset "Greedy - length(flag)<length(word bc)" begin
   flag_set = FlagSet([
-      FlagPair(
-          Flag("ABC_L", ["XYZ_XYZ_STA_WBC_L"], ["XYZ_XYZ_STA_WBC_R"];flag_type= StartType()),
-          Flag("ABC_R", ["XYZ_XYZ_STO_WBC_L"], ["XYZ_XYZ_STO_WBC_R"])
+      FlagPair{GreedyType}(
+          StartFlag("ABC_L", ["XYZ_XYZ_STA_WBC_L"], ["XYZ_XYZ_STA_WBC_R"]),
+          StopFlag( "ABC_R", ["XYZ_XYZ_STO_WBC_L"], ["XYZ_XYZ_STO_WBC_R"])
       )
   ])
 
@@ -138,17 +138,17 @@ if cond
 end
 "
   flag_set = FlagSet([
-  FlagPair(
-    Flag("function", ["\n"," "], [" "];flag_type= StartType()),
-    Flag("end",      ["\n","\r"], ["\n","\r"];flag_type= StopType())
+  FlagPair{ScopeType}(
+    StartFlag("function", ["\n"," "], [" "]),
+    StopFlag( "end",      ["\n","\r"], ["\n","\r"])
   ),
-  FlagPair(
-    Flag("if",       ["\n", " "], [" "];flag_type= StartType()),
-    Flag("end",      ["\n","\r", " "], ["\n","\r"];flag_type= StopType())
+  FlagPair{ScopeType}(
+    StartFlag("if",       ["\n", " "], [" "]),
+    StopFlag( "end",      ["\n","\r", " "], ["\n","\r"])
   ),
-  FlagPair(
-    Flag("for",      ["\n", " "], [" "];flag_type= StartType()),
-    Flag("end",      ["\n","\r", " "], ["\n","\r"];flag_type= StopType())
+  FlagPair{ScopeType}(
+    StartFlag("for",      ["\n", " "], [" "]),
+    StopFlag( "end",      ["\n","\r", " "], ["\n","\r"])
   )])
 
   token_stream = TokenStream(text, flag_set)
@@ -157,3 +157,16 @@ end
   export_results && export_plot(token_stream, text; path=".")
 
 end
+
+@testset "start_flag == stop_flag, same word bcs" begin
+  flag_set = FlagSet([
+        FlagPair{GreedyType}(
+        StartFlag("|", [" "], [" "]),
+        StopFlag( "|", [" "], [" "])
+        )
+        ])
+  text = "baz | foo | baz | bar | foobaz"
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("|-|") == " | foo |  | bar | "
+end
+
