@@ -170,3 +170,15 @@ end
   @test token_stream("|-|") == " | foo |  | bar | "
 end
 
+@testset "Unicode" begin
+  flag_set = FlagSet([
+        FlagPair{GreedyType}(
+        StartFlag("|", [" "], [" "]),
+        StopFlag( "|", [" "], [" "])
+        )
+        ])
+  text = "baz | θ | baz | ϕ | foobaz"
+  token_stream = TokenStream(text, flag_set)
+  @test token_stream("|-|") == " | θ |  | ϕ | "
+end
+
