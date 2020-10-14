@@ -5,41 +5,28 @@
 debug() = false
 # export tokenize, get_string
 
-function start_cond(nt, active_scope)
-  if isempty(active_scope)
-    return nt.flag isa StartFlag
-  else
-    if grep_type(nt.fp) === GreedyType
-      return nt.flag isa StartFlag && last(active_scope) ≠ nt.ID
-    else
-      return nt.flag isa StartFlag
-    end
-  end
-end
-function stop_cond(nt, active_scope)
-  if grep_type(nt.fp) === GreedyType
-    if isempty(active_scope)
-      return false
-    else
-      return nt.trig in nt.fp.stop.trigger
-    end
-  else
-    if isempty(active_scope)
-      return false
-    else
-      return nt.flag isa StopFlag
-    end
-  end
-end
+is_start_cond(nt, active_scope) =
+    is_start_cond(grep_type(nt.fp), nt.flag, nt.ID, active_scope)
+
+is_start_cond(gt::Type{GreedyType}, ::StartFlag, ID, active_scope) =
+    isempty(active_scope) ? true : last(active_scope) ≠ ID
+is_start_cond(gt, ::StopFlag, args...) = false
+is_start_cond(gt, ::StartFlag, args...) = true
+
+is_stop_cond(nt, active_scope) =
+    is_stop_cond(grep_type(nt.fp), nt.flag, active_scope)
+is_stop_cond(gt, ::StartFlag, active_scope) = false
+is_stop_cond(gt, ::StopFlag, active_scope) =
+    isempty(active_scope) ? false : true
 
 function substr(s,i,j)
-  N = length(s)
-  i_safe = clamp(i, 1, N)
-  j_safe = clamp(j, 1, N)
-  @assert 0<i_safe<N+1
-  @assert 0<j_safe<N+1
-  @assert i_safe<=j_safe
-  return chop(s,head=i_safe-1,tail=N-j_safe)
+    try
+      ss = SubString(s, i, j)
+    catch
+      # bad unicode ending, return
+      # nothing for error handling.
+      return nothing
+    end
 end
 
 """
@@ -51,6 +38,20 @@ end
 A dictionary whose keys are the flag IDs,
 and whose values are vectors of `Int`s
 indicating the nestedness of the flag.
+
+
+The token stream is incremented
+with a vector of Int's:
+
+scope⁺          |  |      |
+            |------------------------>
+scope⁻                 |        |  |
+
+                    ___    _____
+                 __|   |__|     |__
+            |   |                  |
+scope       |------------------------>
+
 """
 function TokenStream(
     code::S,
@@ -60,7 +61,7 @@ function TokenStream(
   @inbounds begin
     flag_pairs = flag_set.flag_pairs
 
-    all_flags = []
+    all_flags = NamedTuple[]
     for x in flag_pairs
       for trig in (x.start.trigger...,)
         push!(all_flags, (fp=x, trig=trig, flag=x.start, ID=x.ID))
@@ -69,72 +70,105 @@ function TokenStream(
         push!(all_flags, (fp=x, trig=trig, flag=x.stop, ID=x.ID))
       end
     end
-    greedy_config = any([grep_type(nt.fp) isa GreedyType for nt in all_flags])
+    greedy_config = any([grep_type(fp) isa GreedyType for fp in flag_pairs])
 
     # Convenience maps:
-    trig2ID = Dict(nt.trig => nt.ID for nt in all_flags)
     ei = eachindex(code)
+    i_max = max(ei...)
     ei_end = last(ei)
-    token_stream = Dict()
-    @inbounds for nt in all_flags
-      token_stream[trig2ID[nt.trig]] = [0 for i in ei]
+    token_stream = Dict{String,Vector{Int}}()
+    token_stream⁺ = Dict{String,Vector{Int}}()
+    token_stream⁻ = Dict{String,Vector{Int}}()
+    @inbounds for fp in flag_pairs
+      token_stream[fp.ID] = Int[0 for i in 1:i_max]
+      token_stream⁺[fp.ID] = Int[0 for i in 1:i_max]
+      token_stream⁻[fp.ID] = Int[0 for i in 1:i_max]
     end
 
-    lenflags = length(all_flags)
-    flens = length.([nt.trig for nt in all_flags])
-    active_scope = []
+    overlap_trigs = Dict{String,Bool}(nt.ID => false for nt in all_flags)
+    for x in flag_pairs
+      for trig in (x.start.trigger...,)
+        overlap_trigs[x.ID] = any(trig==x for x in x.stop.trigger)
+      end
+    end
+
+    trig_lens = length.(Set([nt.trig for nt in all_flags]))
+    active_scope = String[]
     i = first(ei)
-    i_max = max(ei...)
+
     @inbounds for i_base in ei
+      it = iterate(code, i)
+      it == nothing && break
       debug() && println("------------------- i = $(i)")
-      safe_end = min.(i .+ flens .- 1, ntuple( _ -> ei_end, lenflags))
-      code_substrings = [substr(code, i, j) for j in safe_end]
-      debug() && @show code_substrings
       # Filter non-equal lengths:
-      data = [(nt,code_substr) for
-        (nt,code_substr) in
-        zip(all_flags,code_substrings)
-        if length(nt.trig)==length(code_substr)]
       # may be non-unique, greedy over start trigs
       # Three options:
       #  - 1) Close last active scope
       #  - 2) Open new scope
       #  - 3) Do nothing (no string match)
-      for (nt,code_substr) in data
+      @inbounds for nt in all_flags
+        ID = nt.ID
         trig = nt.trig
-        if trig==code_substr
-          debug() && println("*********** match")
-          # Update token stream (option 1 or 2)
-          debug() && @show nt.trig
-          debug() && @show nt.ID
-          debug() && @show grep_type(nt.fp)
-          debug() && @show nt.flag
-          debug() && @show nt.fp
-          debug() && @show active_scope
-          debug() && @show stop_cond(nt, active_scope)
-          debug() && @show start_cond(nt, active_scope)
-
-          if stop_cond(nt, active_scope)
-            last_scope = last(active_scope)
-            token_stream[last_scope][i+length(trig):end] .-= 1
-            pop!(active_scope)
-          elseif start_cond(nt, active_scope)
-            token_stream[trig2ID[trig]][i:end] .+= 1
-            push!(active_scope, trig2ID[trig])
+        L_trig = length(trig)
+        @inbounds for trig_len in trig_lens
+          safe_end = min(i + trig_len - 1, ei_end)
+          if L_trig ≠ safe_end-i+1
+            # No chance for match
+            continue
           end
-          # increment i to avoid double-counting
-          # for variable flag lengths:
-          i+=max(length(trig)-2, 0)
-          debug() && println("***********")
-          break # leave for loop
-        end
-      end
-      i+=1
-      i = min(i, i_max)
+          code_substr = substr(code, i, safe_end)
+          code_substr==nothing && break
+          if trig==code_substr
+            debug() && println("*********** match")
+            # Update token stream (option 1 or 2)
+            debug() && @show trig
+            debug() && @show ID
+            debug() && @show grep_type(nt.fp)
+            debug() && @show nt.flag
+            debug() && @show nt.fp
+            debug() && @show active_scope
+            debug() && @show is_stop_cond(nt, active_scope)
+            debug() && @show is_start_cond(nt, active_scope)
+
+            # Is true in all tests:
+            stop_cond = is_stop_cond(nt, active_scope)
+            start_cond = is_start_cond(nt, active_scope)
+            if stop_cond
+              i_mod = min(i+L_trig, i_max)
+              token_stream⁺[pop!(active_scope)][i_mod] = -1
+            elseif start_cond
+              token_stream⁻[ID][i] = 1
+              push!(active_scope, ID)
+            end
+            if (stop_cond==start_cond==false) && overlap_trigs[ID]
+              # Need to check if triggers match for complement flag
+              continue
+            end
+            # increment i to avoid double-counting
+            # for variable flag lengths:
+            for k in 1:max(L_trig-1, 0)
+              it = iterate(code, i)
+              it == nothing && break
+              i = it[2]
+            end
+
+            debug() && println("***********")
+            break # leave for loop
+          end # trig==code_substr
+        end # for trig_len in trig_lens
+      end # for nt in all_flags
+      it = iterate(code, i)
+      it == nothing && break
+      i = it[2]
     end # for i in eachindex(code)
 
+    for fp in flag_pairs
+      ID = fp.ID
+      token_stream[ID] = cumsum(token_stream⁺[ID] .+ token_stream⁻[ID])
+    end
+
     if !greedy_config
-      scope_sum = [0 for i in ei]
+      scope_sum = [0 for i in 1:i_max]
       @inbounds for (flag, scope) in token_stream
           scope_sum .+= scope
       end
@@ -154,7 +188,7 @@ A `code` substring whose `TokenStream`, for
 `flag_id`, satisfies the condition `cond`.
 """
 function (ts::TokenStream)(flag_id, cond=x->x>=1)
-  i_code = [i for i in 1:length(ts.code) if cond(ts.token_stream[flag_id][i])]
+  i_code = [i for i in eachindex(ts.code) if cond(ts.token_stream[flag_id][i])]
   # TODO: This is a hack, and very wasteful:
   return join([substr(ts.code, i, i) for i in i_code])
 end

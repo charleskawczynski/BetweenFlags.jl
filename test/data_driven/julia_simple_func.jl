@@ -68,3 +68,63 @@ end
 
 
 end
+
+@testset "Julia: if/function code block" begin
+
+  text = "Foo
+if cond
+    function myfunc()
+        more stuff
+        if cond
+            print('foobar')
+        else
+            print('foobar')
+        end
+        for cond2
+            print('foobar')
+        else
+            print('foobar')
+        end
+        foobaz
+    end
+end
+baz"
+
+  text_expected = "
+if cond
+    function myfunc()
+        more stuff
+        if cond
+            print('foobar')
+        else
+            print('foobar')
+        end
+        for cond2
+            print('foobar')
+        else
+            print('foobar')
+        end
+        foobaz
+    end
+end
+"
+  flag_set = FlagSet([
+  FlagPair{ScopeType}(
+    StartFlag("function", ["\n"," "], [" "]),
+    StopFlag( "end",      ["\n","\r"], ["\n","\r"])
+  ),
+  FlagPair{ScopeType}(
+    StartFlag("if",       ["\n", " "], [" "]),
+    StopFlag( "end",      ["\n","\r", " "], ["\n","\r"])
+  ),
+  FlagPair{ScopeType}(
+    StartFlag("for",      ["\n", " "], [" "]),
+    StopFlag( "end",      ["\n","\r", " "], ["\n","\r"])
+  )])
+
+  token_stream = TokenStream(text, flag_set)
+
+  @test token_stream("if-end") == text_expected
+  export_results && export_plot(token_stream, text; path=".")
+
+end

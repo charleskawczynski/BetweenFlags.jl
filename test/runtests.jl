@@ -15,5 +15,6 @@ end
     include(joinpath("unit","flag_pair.jl"))
     include(joinpath("unit","tokenize.jl"))
     include(joinpath("data_driven","tokenize.jl"))
+    include(joinpath("perf","perf.jl"))
 end
 
