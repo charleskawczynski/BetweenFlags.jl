@@ -11,10 +11,23 @@ if export_results
 end
 
 @testset "BetweenFlags" begin
-    include(joinpath("unit","flags.jl"))
-    include(joinpath("unit","flag_pair.jl"))
-    include(joinpath("unit","tokenize.jl"))
+  @testset "Unit tests" begin
+    @testset "Flags" begin
+      include(joinpath("unit","flags.jl"))
+      include(joinpath("unit","flag_pair.jl"))
+    end
+    @testset "Tokenize - with boundaries" begin
+      include(joinpath("unit","tokenize.jl"))
+    end
+    @testset "Tokenize - no outer boundaries" begin
+      include(joinpath("unit","tokenize_no_outer_boundaries.jl"))
+    end
+  end
+  @testset "Data-driven tests" begin
     include(joinpath("data_driven","tokenize.jl"))
+  end
+  @testset "Performance tests" begin
     include(joinpath("perf","perf.jl"))
+  end
 end
 
