@@ -24,20 +24,20 @@ struct StartFlag{GT} <: AbstractFlag{GT}
   flag::String
   flag_boundaries_left::Vector{String}
   flag_boundaries_right::Vector{String}
-  trigger::Vector{String}
+  trigger::Dict{Tuple,String}
 end
 function StartFlag(flag::S,
   flag_boundaries_left=S[],
   flag_boundaries_right=S[];
   grep_type::AbstractGrepType=GreedyType()
   ) where {S<:AbstractString, GT<:AbstractGrepType}
-  trigger = Vector{String}()
+  trigger = Dict{Tuple,String}()
   for left in flag_boundaries_left
     for right in flag_boundaries_right
-      push!(trigger, string(left, flag, right))
+      trigger[(left,right)] = string(left, flag, right)
     end
   end
-  isempty(trigger) && push!(trigger, flag)
+  isempty(trigger) && (trigger[("","")] = flag)
   return StartFlag{typeof(grep_type)}(flag, flag_boundaries_left,
         flag_boundaries_right, trigger)
 end
@@ -54,20 +54,20 @@ struct StopFlag{GT} <: AbstractFlag{GT}
   flag::String
   flag_boundaries_left::Vector{String}
   flag_boundaries_right::Vector{String}
-  trigger::Vector{String}
+  trigger::Dict{Tuple,String}
 end
 function StopFlag(flag::S,
   flag_boundaries_left=S[],
   flag_boundaries_right=S[];
   grep_type::AbstractGrepType=GreedyType()
   ) where {S<:AbstractString}
-  trigger = Vector{String}()
+  trigger = Dict{Tuple,String}()
   for left in flag_boundaries_left
     for right in flag_boundaries_right
-      push!(trigger, string(left, flag, right))
+      trigger[(left,right)] = string(left, flag, right)
     end
   end
-  isempty(trigger) && push!(trigger, flag)
+  isempty(trigger) && (trigger[("","")] = flag)
   return StopFlag{typeof(grep_type)}(flag, flag_boundaries_left,
         flag_boundaries_right, trigger)
 end

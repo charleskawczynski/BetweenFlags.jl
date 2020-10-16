@@ -3,7 +3,6 @@
 ####
 
 debug() = false
-# export tokenize, get_string
 
 is_start_cond(nt, active_scope) =
     is_start_cond(grep_type(nt.fp), nt.flag, nt.ID, active_scope)
@@ -55,7 +54,8 @@ scope       |------------------------>
 """
 function TokenStream(
     code::S,
-    flag_set::FlagSet{FP}
+    flag_set::FlagSet{FP};
+    rm_outer_bcs = false
   ) where {S<:AbstractString, FP<:FlagPair}
 
   @inbounds begin
@@ -63,11 +63,13 @@ function TokenStream(
 
     all_flags = NamedTuple[]
     for x in flag_pairs
-      for trig in (x.start.trigger...,)
-        push!(all_flags, (fp=x, trig=trig, flag=x.start, ID=x.ID))
+      for (wb, trig) in x.start.trigger
+        push!(all_flags, (fp=x, trig=trig, flag=x.start, ID=x.ID,
+          len_b_left=length(wb[1]), len_b_right=length(wb[2])))
       end
-      for trig in (x.stop.trigger...,)
-        push!(all_flags, (fp=x, trig=trig, flag=x.stop, ID=x.ID))
+      for (wb, trig) in x.stop.trigger
+        push!(all_flags, (fp=x, trig=trig, flag=x.stop, ID=x.ID,
+          len_b_left=length(wb[1]), len_b_right=length(wb[2])))
       end
     end
     greedy_config = any([grep_type(fp) isa GreedyType for fp in flag_pairs])
@@ -87,8 +89,8 @@ function TokenStream(
 
     overlap_trigs = Dict{String,Bool}(nt.ID => false for nt in all_flags)
     for x in flag_pairs
-      for trig in (x.start.trigger...,)
-        overlap_trigs[x.ID] = any(trig==x for x in x.stop.trigger)
+      for trig in values(x.start.trigger)
+        overlap_trigs[x.ID] = any(trig==x for x in values(x.stop.trigger))
       end
     end
 
@@ -134,10 +136,19 @@ function TokenStream(
             stop_cond = is_stop_cond(nt, active_scope)
             start_cond = is_start_cond(nt, active_scope)
             if stop_cond
-              i_mod = min(i+L_trig, i_max)
+              if rm_outer_bcs
+                i_mod = min(i+L_trig-nt.len_b_right, i_max)
+              else
+                i_mod = min(i+L_trig, i_max)
+              end
               token_stream⁺[pop!(active_scope)][i_mod] = -1
             elseif start_cond
-              token_stream⁻[ID][i] = 1
+              if rm_outer_bcs
+                i_mod = i+nt.len_b_left
+              else
+                i_mod = i
+              end
+              token_stream⁻[ID][i_mod] = 1
               push!(active_scope, ID)
             end
             if (stop_cond==start_cond==false) && overlap_trigs[ID]
@@ -189,7 +200,6 @@ A `code` substring whose `TokenStream`, for
 """
 function (ts::TokenStream)(flag_id, cond=x->x>=1)
   i_code = [i for i in eachindex(ts.code) if cond(ts.token_stream[flag_id][i])]
-  # TODO: This is a hack, and very wasteful:
   return join([substr(ts.code, i, i) for i in i_code])
 end
 
